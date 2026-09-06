@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>视频 - wuzhanqi.cn</title>
+    <meta name="description" content="wuzhanqi.cn 视频页面 - 观看精彩内容">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 返回主页 */
+        .back-home {
+            text-align: center;
+            padding: 15px 20px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .back-home a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .back-home a:hover,
+        .back-home a:active {
+            opacity: 1;
+        }
+
+        /* Hero 区域 */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+            top: -50%;
+            left: -50%;
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            animation: fadeInDown 1s ease 0.2s backwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 视频容器 */
+        .video-container {
+            max-width: 900px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            overflow: hidden;
+            margin-bottom: 40px;
+            animation: slideUp 0.8s ease 0.3s backwards;
+        }
+
+        .video-card:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            background: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            border: none;
+        }
+
+        .video-info {
+            padding: 24px 28px;
+        }
+
+        .video-info h2 {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 25px 20px;
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #fff;
+        }
+
+        /* 响应式 - 平板 */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 35px 15px 50px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .video-container {
+                margin: -30px auto 40px;
+            }
+
+            .video-card {
+                margin-bottom: 30px;
+            }
+
+            .video-info {
+                padding: 18px 20px;
+            }
+
+            .video-info h2 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* 响应式 - 手机 */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .video-container {
+                margin: -25px auto 30px;
+                padding: 0 12px;
+            }
+
+            .video-card {
+                border-radius: 12px;
+                margin-bottom: 25px;
+            }
+
+            .video-info {
+                padding: 14px 16px;
+            }
+
+            .video-info h2 {
+                font-size: 1.05rem;
+            }
+
+            .video-info p {
+                font-size: 0.88rem;
+            }
+        }
+
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 返回主页 -->
+<div class="back-home">
+    <a href="index.html">⬅️ wuzhanqi.cn</a>
+</div>
+
+<!-- Hero 区域 -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>📹 视频中心</h1>
+        <p>观看精彩内容，探索更多可能</p>
+    </div>
+</section>
+
+<!-- 视频播放区域 -->
+<div class="video-container">
+    <!-- 视频 1 -->
+    <div class="video-card">
+        <!-- Bilibili 嵌入视频 1 -->
+        <div class="video-wrapper">
+            <iframe
+                src="//player.bilibili.com/player.html?bvid=BV1eP7d6fEBb&page=1"
+                scrolling="no"
+                border="0"
+                frameborder="no"
+                framespacing="0"
+                allowfullscreen="true"
+                loading="lazy"
+            ></iframe>
+        </div>
+
+        <!-- 视频 1 信息 -->
+        <div class="video-info">
+            <h2>视频 1</h2>
+            <p>精彩视频内容，敬请观看。</p>
+        </div>
+    </div>
+
+    <!-- 视频 2 -->
+    <div class="video-card">
+        <!-- Bilibili 嵌入视频 2 -->
+        <div class="video-wrapper">
+            <iframe
+                src="//player.bilibili.com/player.html?bvid=BV1VT7d6oEj5&page=1"
+                scrolling="no"
+                border="0"
+                frameborder="no"
+                framespacing="0"
+                allowfullscreen="true"
+                loading="lazy"
+            ></iframe>
+        </div>
+
+        <!-- 视频 2 信息 -->
+        <div class="video-info">
+            <h2>视频 2</h2>
+            <p>更多精彩内容，等待你的发现。</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>&copy; 2026 <a href="index.html">wuzhanqi.cn</a> · All rights reserved.</p>
+</footer>
+
+<script>
+    // 使用 Intersection Observer 优化动画性能
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    // 观察动画元素
+    document.querySelectorAll('.hero-content, .video-card').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>

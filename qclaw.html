@@ -1,0 +1,568 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QClaw - 你的智能 AI 助手 | 邀请注册赢积分</title>
+    <meta name="description" content="QClaw 智能 AI 助手，让工作更高效，生活更轻松。邀请好友注册赢积分！">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero 区域 */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+            top: -50%;
+            left: -50%;
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            animation: fadeInDown 1s ease 0.2s backwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            background: white;
+            color: #667eea;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeInDown 1s ease 0.4s backwards;
+            touch-action: manipulation;
+        }
+
+        .cta-button:hover,
+        .cta-button:active {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* 功能区域 */
+        .features {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #333;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            will-change: transform;
+        }
+
+        .feature-card:hover,
+        .feature-card:active {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* 奖励区域 */
+        .rewards {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 80px 20px;
+            color: white;
+        }
+
+        .rewards-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .rewards h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .reward-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .reward-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+            will-change: transform;
+        }
+
+        .reward-card:hover,
+        .reward-card:active {
+            transform: translateY(-5px);
+        }
+
+        .reward-card .points {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .reward-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .reward-card p {
+            opacity: 0.9;
+        }
+
+        /* 使用场景 */
+        .scenarios {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .scenarios h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #333;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .scenario-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .scenario-item {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+            will-change: transform;
+        }
+
+        .scenario-item:hover,
+        .scenario-item:active {
+            transform: translateX(5px);
+        }
+
+        .scenario-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .scenario-item p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* CTA 区域 */
+        .final-cta {
+            background: #1a1a2e;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .final-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .invite-link-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .invite-link {
+            background: white;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+            word-break: break-all;
+            user-select: all;
+            font-size: 0.9rem;
+        }
+
+        .copy-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-decoration: none;
+            touch-action: manipulation;
+        }
+
+        .copy-button:hover,
+        .copy-button:active {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background: #0f0f1e;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 - 平板 */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .features,
+            .rewards,
+            .scenarios,
+            .final-cta {
+                padding: 60px 15px;
+            }
+
+            .features h2,
+            .rewards h2,
+            .scenarios h2,
+            .final-cta h2 {
+                font-size: 2rem;
+            }
+
+            .feature-card,
+            .reward-card,
+            .scenario-item {
+                padding: 30px 20px;
+            }
+        }
+
+        /* 响应式 - 手机 */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 1.1rem;
+            }
+
+            .features h2,
+            .rewards h2,
+            .scenarios h2,
+            .final-cta h2 {
+                font-size: 1.8rem;
+            }
+
+            .invite-link {
+                font-size: 0.8rem;
+                padding: 12px 15px;
+            }
+
+            .copy-button {
+                padding: 12px 25px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 返回主页 -->
+    <div style="text-align:center;padding:15px 20px 0;">
+        <a href="index.html" style="color:#667eea;text-decoration:none;font-size:1rem;opacity:0.9;transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.9">⬅️ wuzhanqi.cn</a>
+    </div>
+
+    <!-- Hero 区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>🚀 QClaw</h1>
+            <p>你的智能 AI 助手，让工作更高效，生活更轻松</p>
+            <a href="#invite" class="cta-button">立即获取邀请奖励</a>
+        </div>
+    </section>
+
+    <!-- 功能介绍 -->
+    <section class="features">
+        <h2>为什么选择 QClaw？</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3>智能对话</h3>
+                <p>强大的 AI 模型支持，理解你的需求，提供精准回答和解决方案</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>自动化工作流</h3>
+                <p>定时任务、消息推送、数据同步，让重复工作自动化</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔗</span>
+                <h3>多平台集成</h3>
+                <p>支持微信、Telegram、Discord 等主流平台，随时随地使用</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🛠️</span>
+                <h3>技能扩展</h3>
+                <p>丰富的技能库，支持自定义功能，满足个性化需求</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 邀请奖励 -->
+    <section class="rewards">
+        <div class="rewards-content">
+            <h2>🎁 邀请好友，赢取积分</h2>
+            <div class="reward-cards">
+                <div class="reward-card">
+                    <div class="points">100</div>
+                    <h3>邀请新用户注册</h3>
+                    <p>每成功邀请一位新用户，获得 100 积分奖励</p>
+                </div>
+                <div class="reward-card">
+                    <div class="points">10</div>
+                    <h3>邀请老用户使用</h3>
+                    <p>邀请已注册但未使用的用户，获得 10 积分奖励</p>
+                </div>
+            </div>
+            <p style="font-size: 1.1rem; opacity: 0.95;">积分可用于兑换更多 AI 功能和服务</p>
+        </div>
+    </section>
+
+    <!-- 使用场景 -->
+    <section class="scenarios">
+        <h2>适用场景</h2>
+        <div class="scenario-list">
+            <div class="scenario-item">
+                <h3>📝 内容创作</h3>
+                <p>撰写文章、生成报告、翻译文档，AI 助你提升效率</p>
+            </div>
+            <div class="scenario-item">
+                <h3>💻 编程开发</h3>
+                <p>代码生成、调试辅助、技术问答，开发者的得力助手</p>
+            </div>
+            <div class="scenario-item">
+                <h3>📊 数据分析</h3>
+                <p>数据处理、图表生成、趋势分析，让数据说话</p>
+            </div>
+            <div class="scenario-item">
+                <h3>🎓 学习辅导</h3>
+                <p>知识问答、学习规划、作业辅助，学习路上的好伙伴</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 最终 CTA -->
+    <section class="final-cta" id="invite">
+        <h2>立即加入 QClaw</h2>
+        <p>点击下方按钮，使用邀请码注册，开始你的 AI 助手之旅</p>
+        <div class="invite-link-box">
+            <div class="invite-link" id="inviteLink">https://qclaw.qq.com?channel=6070&share_type=invite-share&invite_code=SGUyy5bMIyDrCW4L</div>
+            <a href="https://qclaw.qq.com?channel=6070&share_type=invite-share&invite_code=SGUyy5bMIyDrCW4L" class="copy-button" target="_blank" rel="noopener noreferrer">🚀 立即注册 QClaw</a>
+        </div>
+        <p style="margin-top: 20px; opacity: 0.8; font-size: 0.95rem;">邀请码: SGUyy5bMIyDrCW4L（已自动包含在链接中）</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 QClaw. All rights reserved. | 让 AI 助力每一天</p>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 使用 Intersection Observer 优化动画性能
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // 观察所有动画元素
+        document.querySelectorAll('.features h2, .rewards h2, .scenarios h2, .final-cta h2, .final-cta p, .invite-link-box').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

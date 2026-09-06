@@ -1,0 +1,955 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>wuzhanqi.cn</title>
+    <meta name="description" content="wuzhanqi.cn - 静水流深，万物生长">
+    
+    <!-- 预连接优化 -->
+    <link rel="preconnect" href="https://static.cloudflareinsights.com">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .domain {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.8;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+        
+        .clocks-wrapper {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+        
+        .clock-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .clock-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+        
+        .clock {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            border: 3px solid rgba(255,255,255,0.35);
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            will-change: transform;
+        }
+        
+        .clock .tick {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: rgba(255,255,255,0.7);
+            top: 6px;
+            left: 50%;
+            transform-origin: 50% 69px;
+            border-radius: 2px;
+        }
+        
+        .clock .tick.major {
+            width: 3px;
+            height: 12px;
+            background: rgba(255,255,255,0.95);
+            top: 4px;
+            transform-origin: 50% 71px;
+        }
+        
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: 50% 100%;
+            border-radius: 4px;
+            will-change: transform;
+        }
+        
+        .hour-hand {
+            width: 5px;
+            height: 42px;
+            background: rgba(255,255,255,0.95);
+            margin-left: -2.5px;
+            z-index: 3;
+        }
+        
+        .minute-hand {
+            width: 3px;
+            height: 58px;
+            background: rgba(255,255,255,0.85);
+            margin-left: -1.5px;
+            z-index: 4;
+        }
+        
+        .second-hand {
+            width: 2px;
+            height: 64px;
+            background: #ff6b6b;
+            margin-left: -1px;
+            z-index: 5;
+            border-radius: 2px;
+        }
+        
+        .clock::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+        }
+        
+        .digital {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: "Courier New", monospace;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            color: #fff;
+        }
+        
+        .date {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+        
+        .contact {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+        
+        .links {
+            display: flex;
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            padding: 12px 28px;
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 30px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            margin: 0 0.4rem;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .btn:hover,
+        .btn:active {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+        }
+        
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.18);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        
+        .menu-toggle:hover,
+        .menu-toggle:active {
+            background: rgba(255,255,255,0.35);
+        }
+        
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .mobile-menu .btn {
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            min-width: 200px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+        
+        /* ===== 留言板样式 ===== */
+        .guestbook {
+            width: 100%;
+            max-width: 600px;
+            margin: 3rem auto 1rem;
+            padding: 0 1rem;
+            animation: fadeInUp 0.8s ease 0.8s backwards;
+        }
+        
+        .guestbook-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .guestbook-form {
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid rgba(255,255,255,0.25);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: rgba(255,255,255,0.6);
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* 附件上传区域 */
+        .attachment-area {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .upload-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .upload-btn input[type="file"] {
+            display: none;
+        }
+
+        .preview-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .preview-item img {
+            display: block;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        .preview-item .file-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 4px;
+            word-break: break-all;
+        }
+
+        .preview-item .file-icon .icon {
+            font-size: 1.8rem;
+            margin-bottom: 2px;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .preview-item .remove-btn:hover {
+            background: rgba(255,0,0,0.7);
+        }
+
+        .size-warning {
+            color: #ffd54f;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .submit-btn:hover {
+            background: rgba(255,255,255,0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-msg {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
+            .links { display: none; }
+            .clocks-wrapper { gap: 1.5rem; }
+            h1 { font-size: 2.5rem; }
+            .guestbook { margin-top: 2rem; }
+        }
+        
+        @media (max-width: 600px) {
+            .clocks-wrapper { flex-direction: column; gap: 2rem; }
+            h1 { font-size: 2.2rem; }
+            .clock { width: 120px; height: 120px; }
+            .clock .tick { transform-origin: 50% 55px; }
+            .clock .tick.major { transform-origin: 50% 57px; }
+            .hour-hand { height: 33px; }
+            .minute-hand { height: 46px; }
+            .second-hand { height: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 汉堡菜单按钮 -->
+    <div class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="qclaw.html" class="btn" onclick="closeMenu()">🦞 小龙虾推荐</a>
+        <a href="coze.html" class="btn" onclick="closeMenu()">🔮 扣子推荐</a>
+        <a href="converter.html" class="btn" onclick="closeMenu()">🔄 单位换算</a>
+        <a href="video.html" class="btn" onclick="closeMenu()">📹 视频</a>
+        <a href="news.html" class="btn" onclick="closeMenu()">📰 每日要闻</a>
+        <a href="links.html" class="btn" onclick="closeMenu()">🔗 更多</a>
+    </div>
+    
+    <!-- 主内容包装器 -->
+    <div class="main-wrapper">
+        <div class="header">
+            
+            <p class="domain">wuzhanqi.cn</p>
+            <p class="tagline">静水流深，万物生长。这里是一片安静的数字角落。</p>
+        </div>
+        
+        <div class="clocks-wrapper">
+            <div class="clock-card">
+                <div class="clock-label">🇨🇳 北京时间</div>
+                <div class="clock" id="clock-beijing">
+                    <div class="hand hour-hand" id="hour-beijing"></div>
+                    <div class="hand minute-hand" id="minute-beijing"></div>
+                    <div class="hand second-hand" id="second-beijing"></div>
+                </div>
+                <div class="digital" id="digital-beijing">00:00:00</div>
+                <div class="date" id="date-beijing"></div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="clock-label">🇲🇦 摩洛哥时间</div>
+                <div class="clock" id="clock-morocco">
+                    <div class="hand hour-hand" id="hour-morocco"></div>
+                    <div class="hand minute-hand" id="minute-morocco"></div>
+                    <div class="hand second-hand" id="second-morocco"></div>
+                </div>
+                <div class="digital" id="digital-morocco">00:00:00</div>
+                <div class="date" id="date-morocco"></div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="clock-label">🇺🇸 美国东部时间</div>
+                <div class="clock" id="clock-usa">
+                    <div class="hand hour-hand" id="hour-usa"></div>
+                    <div class="hand minute-hand" id="minute-usa"></div>
+                    <div class="hand second-hand" id="second-usa"></div>
+                </div>
+                <div class="digital" id="digital-usa">00:00:00</div>
+                <div class="date" id="date-usa"></div>
+            </div>
+        </div>
+        
+        <p class="contact">
+            📧 QQ: 181609798 / 5955131 / 9325387<br>
+            💬 微信: oicqoicq
+        </p>
+        
+        <!-- 桌面端按钮 -->
+        <div class="links">
+            <a href="qclaw.html" class="btn">🦞 小龙虾推荐</a>
+            <a href="coze.html" class="btn">🔮 扣子推荐</a>
+            <a href="converter.html" class="btn">🔄 单位换算</a>
+            <a href="video.html" class="btn">📹 视频</a>
+            <a href="news.html" class="btn">📰 每日要闻</a>
+            <a href="links.html" class="btn">🔗 更多</a>
+        </div>
+    </div>
+    
+    <!-- ===== 留言板 ===== -->
+    <div class="guestbook">
+        <h2 class="guestbook-title">💬 留言板</h2>
+        
+        <div class="guestbook-form">
+            <div class="form-group">
+                <label>昵称</label>
+                <input type="text" id="nickname" placeholder="给自己起个名字" maxlength="20">
+            </div>
+            <div class="form-group">
+                <label>留言内容</label>
+                <textarea id="message" placeholder="说点什么吧..." maxlength="500"></textarea>
+            </div>
+            <div class="form-group">
+                <label>添加附件</label>
+                <div class="attachment-area">
+                    <label class="upload-btn">
+                        🖼️ 插入图片
+                        <input type="file" id="imageInput" accept="image/*" multiple onchange="handleFiles(this.files, 'image')">
+                    </label>
+                    <label class="upload-btn">
+                        📎 添加文件
+                        <input type="file" id="fileInput" multiple onchange="handleFiles(this.files, 'file')">
+                    </label>
+                </div>
+                <div id="sizeWarning" class="size-warning" style="display:none;"></div>
+                <div class="preview-list" id="previewList"></div>
+            </div>
+            <button class="submit-btn" id="submitBtn" onclick="submitMessage()">发表留言</button>
+        </div>
+        
+        <div id="resultArea"></div>
+    </div>
+    
+    <footer>© 2026 wuzhanqi.cn</footer>
+
+    <!-- 留言板已切换到 Cloudflare Pages Function (/api/message)，不再依赖 EmailJS SDK -->
+    
+    <script>
+        // ===== 全局状态（必须在所有函数之前初始化）=====
+        let attachments = []; // 留言板附件列表 { name, type, size, data(base64), category }
+
+        // 菜单切换
+        function toggleMenu() {
+            const toggle = document.getElementById('menuToggle');
+            const menu = document.getElementById('mobileMenu');
+            toggle.classList.toggle('active');
+            menu.classList.toggle('active');
+        }
+        
+        function closeMenu() {
+            const toggle = document.getElementById('menuToggle');
+            const menu = document.getElementById('mobileMenu');
+            toggle.classList.remove('active');
+            menu.classList.remove('active');
+        }
+        
+        document.addEventListener('click', function(event) {
+            const toggle = document.getElementById('menuToggle');
+            const menu = document.getElementById('mobileMenu');
+            if (!toggle.contains(event.target) && !menu.contains(event.target)) {
+                closeMenu();
+            }
+        });
+        
+        // 时区映射
+        const TIMEZONES = {
+            beijing: { id: 'clock-beijing', hour: 'hour-beijing', minute: 'minute-beijing', second: 'second-beijing', digital: 'digital-beijing', date: 'date-beijing', tz: 'Asia/Shanghai' },
+            morocco: { id: 'clock-morocco', hour: 'hour-morocco', minute: 'minute-morocco', second: 'second-morocco', digital: 'digital-morocco', date: 'date-morocco', tz: 'Africa/Casablanca' },
+            usa:     { id: 'clock-usa',     hour: 'hour-usa',     minute: 'minute-usa',     second: 'second-usa',     digital: 'digital-usa',     date: 'date-usa',     tz: 'America/New_York' }
+        };
+        
+        function createTicks(clockId) {
+            const clock = document.getElementById(clockId);
+            for (let i = 0; i < 12; i++) {
+                const tick = document.createElement('div');
+                tick.className = i % 3 === 0 ? 'tick major' : 'tick';
+                tick.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+                tick.style.left = '50%';
+                clock.appendChild(tick);
+            }
+        }
+        
+        createTicks('clock-beijing');
+        createTicks('clock-morocco');
+        createTicks('clock-usa');
+        
+        function updateClock(city) {
+            const cfg = TIMEZONES[city];
+            const now = new Date();
+            
+            const timeStr = now.toLocaleTimeString('zh-CN', { timeZone: cfg.tz, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById(cfg.digital).textContent = timeStr;
+            
+            const dateStr = now.toLocaleDateString('zh-CN', { timeZone: cfg.tz, year: 'numeric', month: '2-digit', day: '2-digit' });
+            document.getElementById(cfg.date).textContent = dateStr;
+            
+            const tzStr = cfg.tz;
+            const h = parseInt(now.toLocaleString('en-US', { timeZone: tzStr, hour12: false, hour: '2-digit' }));
+            const m = parseInt(now.toLocaleString('en-US', { timeZone: tzStr, minute: '2-digit' }));
+            const s = parseInt(now.toLocaleString('en-US', { timeZone: tzStr, second: '2-digit' }));
+            const ampm = now.toLocaleString('en-US', { timeZone: tzStr, hour: 'numeric', hour12: true });
+            const hour = ampm.includes('PM') ? (h === 12 ? 12 : h + 12) : (h === 12 ? 0 : h);
+            
+            const secDeg = s * 6;
+            const minDeg = m * 6 + s * 0.1;
+            const hourDeg = (hour % 12) * 30 + m * 0.5;
+            
+            document.getElementById(cfg.hour).style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+            document.getElementById(cfg.minute).style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+            document.getElementById(cfg.second).style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+        }
+        
+        ['beijing', 'morocco', 'usa'].forEach(updateClock);
+        
+        let lastUpdate = 0;
+        function tick(timestamp) {
+            if (timestamp - lastUpdate >= 1000) {
+                ['beijing', 'morocco', 'usa'].forEach(updateClock);
+                lastUpdate = timestamp;
+            }
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        // ===== 留言板后端配置 =====
+        // 已从 EmailJS 迁移到 Cloudflare Pages Function (/api/message)
+        // 邮件通过 Resend API 转寄到站长 QQ 邮箱
+        const MESSAGE_API_URL = '/api/message';
+
+        // 获取IP地址
+        async function getIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip;
+            } catch (e) {
+                return '未知';
+            }
+        }
+        
+        // ===== 附件管理 =====
+        const MAX_TOTAL_SIZE = 18 * 1024 * 1024; // 总附件 18MB（Resend 邮件附件硬上限 25MB，含 base64 膨胀，视频文件≤18MB 才安全）
+        const MAX_IMAGE_DIM = 1280;            // 图片最大边压缩到 1280px
+        const IMAGE_QUALITY = 0.72;            // JPEG 质量 0.72
+        // attachments 已在脚本顶部声明，此处不再重复
+
+        // 压缩图片：通过 Canvas 缩放 + 降低质量
+        function compressImage(file, maxWidth, maxHeight, quality) {
+            return new Promise(function(resolve) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        let w = img.width, h = img.height;
+                        // 按比例缩放
+                        if (w > maxWidth || h > maxHeight) {
+                            const ratio = Math.min(maxWidth / w, maxHeight / h);
+                            w = Math.round(w * ratio);
+                            h = Math.round(h * ratio);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        // 输出为 JPEG（比 PNG 小很多）
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve({
+                            name: file.name.replace(/\.[^.]+$/, '.jpg'),
+                            type: 'image/jpeg',
+                            size: Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 0.75),
+                            data: dataUrl,
+                            category: 'image'
+                        });
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function handleFiles(fileList, category) {
+            const files = Array.from(fileList);
+            files.forEach(function(file) {
+                if (attachments.length >= 5) {
+                    alert('最多添加 5 个附件');
+                    return;
+                }
+                // 图片文件自动压缩，非图片文件直接读取
+                if (file.type && file.type.startsWith('image/')) {
+                    compressImage(file, MAX_IMAGE_DIM, MAX_IMAGE_DIM, IMAGE_QUALITY).then(function(compressed) {
+                        const currentTotal = attachments.reduce(function(sum, a) { return sum + a.size; }, 0) + compressed.size;
+                        if (currentTotal > MAX_TOTAL_SIZE) {
+                            alert('附件总大小不能超过 18MB，请用更小的视频或减少文件数量（Resend 邮件附件硬上限 25MB，含编码膨胀）');
+                            return;
+                        }
+                        attachments.push(compressed);
+                        renderPreviews();
+                    });
+                } else {
+                    const currentTotal = attachments.reduce(function(sum, a) { return sum + a.size; }, 0) + file.size;
+                    if (currentTotal > MAX_TOTAL_SIZE) {
+                        alert('附件总大小不能超过 18MB（单视频建议≤18MB，超出邮件附件上限会发送失败）');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        attachments.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: e.target.result,
+                            category: category
+                        });
+                        renderPreviews();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            // 清空 input 以便重复选择同一文件
+            document.getElementById(category === 'image' ? 'imageInput' : 'fileInput').value = '';
+        }
+
+        function removeAttachment(index) {
+            attachments.splice(index, 1);
+            renderPreviews();
+        }
+
+        function renderPreviews() {
+            const list = document.getElementById('previewList');
+            const warning = document.getElementById('sizeWarning');
+            const totalSize = attachments.reduce((sum, a) => sum + a.size, 0);
+
+            if (totalSize > MAX_TOTAL_SIZE * 0.8) {
+                warning.textContent = '⚠️ 视频将以邮件附件发送（Resend 硬上限 25MB，含编码膨胀，单视频文件建议≤18MB）';
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+
+            if (attachments.length === 0) {
+                list.innerHTML = '';
+                return;
+            }
+
+            list.innerHTML = attachments.map((a, i) => {
+                if (a.category === 'image') {
+                    return `<div class="preview-item">
+                        <img src="${a.data}" alt="${a.name}">
+                        <button class="remove-btn" onclick="removeAttachment(${i})">✕</button>
+                    </div>`;
+                } else {
+                    const ext = a.name.split('.').pop().toUpperCase();
+                    const iconMap = { PDF: '📕', DOC: '📘', DOCX: '📘', XLS: '📗', XLSX: '📗', ZIP: '🗜️', RAR: '🗜️', TXT: '📄' };
+                    const icon = iconMap[ext] || '📎';
+                    return `<div class="preview-item">
+                        <div class="file-icon"><span class="icon">${icon}</span>${ext}</div>
+                        <button class="remove-btn" onclick="removeAttachment(${i})">✕</button>
+                    </div>`;
+                }
+            }).join('');
+        }
+
+        // 提交留言 → 发送到QQ邮箱
+        async function submitMessage() {
+            const nickname = document.getElementById('nickname').value.trim();
+            const content = document.getElementById('message').value.trim();
+            const btn = document.getElementById('submitBtn');
+            const resultArea = document.getElementById('resultArea');
+            
+            if (!nickname) {
+                alert('请输入昵称');
+                return;
+            }
+            if (!content && attachments.length === 0) {
+                alert('请输入留言内容或添加附件');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '发送中...';
+            resultArea.innerHTML = '';
+            
+            try {
+                const ip = await getIP();
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN');
+
+                // 构建邮件内容
+                let messageText = content || '(无文字内容)';
+                let htmlImages = '';
+                if (attachments.length > 0) {
+                    messageText += '\n\n📎 附件列表:';
+                    attachments.forEach((a, i) => {
+                        const sizeStr = a.size < 1024 ? a.size + 'B' : (a.size / 1024).toFixed(1) + 'KB';
+                        messageText += '\n  ' + (i+1) + '. ' + a.name + ' (' + sizeStr + ')';
+                        // 将图片内联为 base64 嵌入邮件正文（Pages Function 直接走 JSON）
+                        if (a.type && a.type.startsWith('image/')) {
+                            htmlImages += '<br><img src="' + a.data + '" style="max-width:400px;border-radius:8px;margin-top:4px;" alt="' + a.name + '">';
+                        }
+                    });
+                }
+                messageText += '\n\n---\nIP: ' + ip + '\n时间: ' + timeStr + '\n来自: ' + window.location.href;
+
+                // 转发到 Cloudflare Pages Function（后端调 Resend 发邮件）
+                const response = await fetch(MESSAGE_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nickname,
+                        content: content || '',
+                        attachments: attachments.map(a => ({
+                            name: a.name,
+                            type: a.type,
+                            size: a.size,
+                            data: a.data,
+                        })),
+                        html_images: htmlImages,
+                        meta: {
+                            ip: ip,
+                            url: window.location.href,
+                        },
+                    }),
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok && data.ok) {
+                    resultArea.innerHTML = `
+                        <div class="success-msg">
+                            ✅ 留言成功！感谢您的留言，站长会尽快回复~
+                        </div>
+                    `;
+                    document.getElementById('nickname').value = '';
+                    document.getElementById('message').value = '';
+                    attachments = [];
+                    renderPreviews();
+                } else {
+                    throw new Error(data.error || ('HTTP ' + response.status));
+                }
+            } catch (e) {
+                console.error('发送失败:', e);
+                const errMsg = e.message || String(e).substring(0, 200);
+                alert('发送失败，请稍后重试：' + errMsg);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '发表留言';
+            }
+        }
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"714a50d7c6014783b02c1f15d0211775","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

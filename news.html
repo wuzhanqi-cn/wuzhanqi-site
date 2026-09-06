@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日要闻 - wuzhanqi.cn</title>
+    <meta name="description" content="wuzhanqi.cn 每日要闻更新">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.6s ease;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        
+        .back-link, .calendar-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .back-link:hover, .calendar-link:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.6s ease 0.1s backwards;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+        
+        .current-filter {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 0.6s ease 0.15s backwards;
+        }
+        
+        .filter-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .filter-badge .clear-filter {
+            margin-left: 0.5rem;
+            padding: 2px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.3s;
+        }
+        
+        .filter-badge .clear-filter:hover {
+            background: rgba(255,255,255,0.35);
+        }
+        
+        .news-stats {
+            text-align: center;
+            margin-bottom: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            animation: fadeInDown 0.6s ease 0.2s backwards;
+        }
+        
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .news-item {
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.25);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease backwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .news-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .news-item:hover::before {
+            opacity: 1;
+        }
+        
+        .news-item:hover {
+            background: rgba(255,255,255,0.18);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        .news-date {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .news-date::before {
+            content: '📅';
+            font-size: 1rem;
+        }
+        
+        .news-content {
+            font-size: 1rem;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+        
+        .news-content p {
+            margin-bottom: 0.8rem;
+        }
+        
+        .news-content p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem 1rem;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .error-msg {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255,0,0,0.1);
+            border: 2px solid rgba(255,0,0,0.3);
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            font-size: 0.85rem;
+            opacity: 0.6;
+            margin-top: 3rem;
+        }
+        
+        /* 动画延迟 */
+        .news-item:nth-child(1) { animation-delay: 0.1s; }
+        .news-item:nth-child(2) { animation-delay: 0.2s; }
+        .news-item:nth-child(3) { animation-delay: 0.3s; }
+        .news-item:nth-child(4) { animation-delay: 0.4s; }
+        .news-item:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .news-item {
+                padding: 1.2rem;
+            }
+            
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+            
+            .back-link, .calendar-link, .refresh-btn {
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="nav-links">
+                <a href="/" class="back-link">← 返回首页</a>
+                <a href="/calendar.html" class="calendar-link">📅 日历</a>
+            </div>
+            <button class="refresh-btn" onclick="loadNews()">🔄 刷新新闻</button>
+        </div>
+        
+        <div class="header">
+            <h1>📰 每日要闻</h1>
+            <p>每日更新，记录时代的脉搏</p>
+        </div>
+        
+        <div class="current-filter" id="currentFilter"></div>
+        <div class="news-stats" id="newsStats"></div>
+        
+        <div class="news-list" id="newsList">
+            <div class="loading">加载中</div>
+        </div>
+        
+        <footer>© 2026 wuzhanqi.cn | 每日23:30更新</footer>
+    </div>
+    
+    <script>
+        const MONTH_NAMES = [
+            '一月', '二月', '三月', '四月', '五月', '六月',
+            '七月', '八月', '九月', '十月', '十一月', '十二月'
+        ];
+        
+        // 获取URL参数
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                year: params.get('year'),
+                month: params.get('month')
+            };
+        }
+        
+        // 加载新闻
+        async function loadNews() {
+            const newsList = document.getElementById('newsList');
+            const newsStats = document.getElementById('newsStats');
+            const currentFilter = document.getElementById('currentFilter');
+            
+            // 显示加载状态
+            newsList.innerHTML = '<div class="loading">加载中</div>';
+            newsStats.textContent = '';
+            currentFilter.innerHTML = '';
+            
+            // 获取筛选条件
+            const { year, month } = getUrlParams();
+            
+            try {
+                const response = await fetch('/news.json?t=' + new Date().getTime());
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const _rawNews = await response.json();
+                // 兼容两种数据格式：纯数组，或 { lastUpdate, source, news: [...] } 对象
+                const newsData = Array.isArray(_rawNews) ? _rawNews : (_rawNews.news || []);
+                
+                // 按日期倒序排列
+                newsData.sort((a, b) => b.date.localeCompare(a.date));
+                
+                // 单月视图: 无 URL 筛选时默认显示“最新有数据的月份”
+                const explicitFilter = Boolean(year && month);
+                let filterYear = year ? parseInt(year) : null;
+                let filterMonth = month ? parseInt(month) : null;
+                const latestDateStr = newsData[0] && newsData[0].date;
+                const latestDateObj = latestDateStr ? new Date(latestDateStr + 'T00:00:00') : null;
+                if (!filterYear) filterYear = latestDateObj ? latestDateObj.getFullYear() : null;
+                if (!filterMonth) {
+                    // 未指定月份: URL 若只给年份, 取该年最新有数据的月份; 否则取整体最新月
+                    if (filterYear) {
+                        let latestInYear = null;
+                        newsData.forEach(n => { if (n.date && new Date(n.date + 'T00:00:00').getFullYear() === filterYear && (!latestInYear || n.date > latestInYear)) latestInYear = n.date; });
+                        if (latestInYear) filterMonth = new Date(latestInYear + 'T00:00:00').getMonth() + 1;
+                    }
+                    if (!filterMonth && latestDateObj) filterMonth = latestDateObj.getMonth() + 1;
+                }
+                
+                // 显示筛选条件（仅日历跳转进入时显示; ✕清除后回到默认最新月）
+                if (explicitFilter && filterYear && filterMonth) {
+                    currentFilter.innerHTML = `
+                        <div class="filter-badge">
+                            <span>📅 筛选: ${filterYear}年${MONTH_NAMES[filterMonth - 1]}</span>
+                            <a href="/news.html" class="clear-filter">✕ 清除</a>
+                        </div>
+                    `;
+                }
+                
+                // 始终按月过滤（单月视图）
+                let filteredData = (filterYear && filterMonth)
+                    ? newsData.filter(news => {
+                        const date = new Date(news.date + 'T00:00:00');
+                        return date.getFullYear() === filterYear && 
+                               date.getMonth() + 1 === filterMonth;
+                      })
+                    : newsData;
+                
+                // 清空列表
+                newsList.innerHTML = '';
+                
+                // 检查是否有结果
+                if (filteredData.length === 0) {
+                    newsList.innerHTML = `
+                        <div class="no-results">
+                            <p>📭 该月份暂无新闻</p>
+                            <a href="/calendar.html" style="color: #fff; margin-top: 1rem; display: inline-block; text-decoration: underline;">查看新闻日历</a>
+                        </div>
+                    `;
+                    newsStats.textContent = `共 0 条新闻`;
+                    return;
+                }
+                
+                // 渲染每条新闻（同一天多条时只显示一次日期行）
+                let lastRenderedDate = '';
+                filteredData.forEach((news, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'news-item';
+                    const showDate = news.date !== lastRenderedDate;
+                    lastRenderedDate = news.date;
+                    // 兼容两种条目格式：content(HTML 摘要) 或 title/category/url(新闻链接)
+                    let newsBodyHtml = '';
+                    if (news.content) {
+                        newsBodyHtml = `<div class="news-content">${news.content}</div>`;
+                    } else {
+                        const catTag = news.category
+                            ? `<span style="display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:1px 10px;font-size:.75rem;margin-bottom:6px;">${news.category}</span><br>`
+                            : '';
+                        const newsTitle = news.title || '（无标题）';
+                        const newsHref = news.url || '#';
+                        newsBodyHtml = `<div class="news-content">${catTag}<a href="${newsHref}" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;word-break:break-all;">${newsTitle}</a></div>`;
+                    }
+                    item.innerHTML = `
+                        ${showDate ? `<div class="news-date">${formatDate(news.date)}</div>` : ''}
+                        ${newsBodyHtml}
+                    `;
+                    newsList.appendChild(item);
+                });
+                
+                // 显示统计信息
+                const latestDate = filteredData[0]?.date || '未知';
+                const oldestDate = filteredData[filteredData.length - 1]?.date || '未知';
+                const filterText = filterYear && filterMonth ? ` ${filterYear}年${MONTH_NAMES[filterMonth - 1]}` : '';
+                newsStats.textContent = `共 ${filteredData.length} 条新闻${filterText} | 最新: ${latestDate} | 最早: ${oldestDate}`;
+                
+            } catch (error) {
+                console.error('加载新闻失败:', error);
+                newsList.innerHTML = `
+                    <div class="error-msg">
+                        <p>❌ 加载失败</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">${error.message}</p>
+                        <button class="refresh-btn" style="margin-top: 1rem;" onclick="loadNews()">重试</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // 格式化日期显示
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            const now = new Date();
+            const diffTime = now - date;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            
+            let prefix = '';
+            if (diffDays === 0) {
+                prefix = '今天 ';
+            } else if (diffDays === 1) {
+                prefix = '昨天 ';
+            } else if (diffDays < 7) {
+                prefix = `${diffDays}天前 `;
+            }
+            
+            return `${prefix}${year}-${month}-${day}`;
+        }
+        
+        // 页面加载时渲染
+        document.addEventListener('DOMContentLoaded', loadNews);
+    </script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单位换算器</title>
+    <meta name="description" content="免费在线单位换算器 - 支持长度、重量、温度、面积、体积、速度等多种单位换算">
+<style>
+  :root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card-hover: #334155;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --success: #22c55e;
+    --radius: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* 背景动画 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(34,197,94,0.06) 0%, transparent 50%);
+    animation: bgFloat 20s ease-in-out infinite alternate;
+    z-index: -1;
+  }
+  @keyframes bgFloat {
+    0% { transform: translate(0,0) rotate(0deg); }
+    100% { transform: translate(-2%,2%) rotate(3deg); }
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  /* 头部 */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  /* 分类标签 */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .tab {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab:hover {
+    border-color: var(--primary);
+    color: var(--primary-light);
+    background: rgba(99,102,241,0.08);
+  }
+  .tab.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(99,102,241,0.3);
+  }
+
+  /* 换算卡片 */
+  .converter-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  .converter-card:hover {
+    transform: translateY(-1px);
+  }
+
+  .input-group {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 20px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    transition: border-color 0.25s;
+  }
+  .input-group:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  .input-group input {
+    flex: 1;
+    padding: 16px 20px;
+    font-size: 1.3rem;
+    background: var(--bg);
+    color: var(--text);
+    border: none;
+    outline: none;
+    font-family: inherit;
+    min-width: 0;
+  }
+  .input-group input::placeholder {
+    color: var(--text-muted);
+    font-size: 1rem;
+  }
+  .input-group select {
+    padding: 16px;
+    font-size: 1rem;
+    background: var(--card);
+    color: var(--text);
+    border: none;
+    border-left: 1px solid var(--border);
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    min-width: 100px;
+  }
+
+  /* 交换按钮 */
+  .swap-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px 0;
+  }
+  .swap-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--primary-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .swap-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: rotate(180deg);
+  }
+
+  /* 结果区域 */
+  .result-area {
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    min-height: 60px;
+  }
+  .result-main {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--success);
+    word-break: break-all;
+    margin-bottom: 12px;
+  }
+  .result-formula {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* 快捷参考表 */
+  .ref-table {
+    margin-top: 28px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ref-table th {
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .ref-table td {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(51,65,85,0.5);
+  }
+  .ref-table tr:hover td {
+    background: rgba(99,102,241,0.05);
+  }
+  .ref-table .val {
+    color: var(--primary-light);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .ref-table .val:hover {
+    text-decoration: underline;
+  }
+
+  /* 历史记录 */
+  .history-section {
+    margin-top: 32px;
+  }
+  .history-title {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .clear-btn {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .clear-btn:hover {
+    color: #f87171;
+    background: rgba(248,113,113,0.1);
+  }
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .history-item {
+    padding: 10px 14px;
+    background: var(--card);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .history-item:hover {
+    border-color: var(--primary);
+    color: var(--text);
+  }
+
+  /* 响应式 */
+  @media (max-width: 600px) {
+    .container { padding: 24px 12px; }
+    .header h1 { font-size: 1.6rem; }
+    .converter-card { padding: 20px; }
+    .input-group input { font-size: 1.1rem; padding: 14px; }
+    .result-main { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+    <!-- 返回主页 -->
+    <div style="text-align:center;padding:15px 20px 0;">
+        <a href="index.html" style="color:#fff;text-decoration:none;font-size:1rem;opacity:0.9;transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.9">⬅️ wuzhanqi.cn</a>
+    </div>
+
+
+<div class="container">
+  <div class="header">
+    <h1>🔄 单位换算器</h1>
+    <p>支持长度、面积、体积、质量、温度、速度、时间、数据存储、压强、功率、油耗、电耗、能量、角度、密度等多种单位换算</p>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="converter-card">
+    <div class="input-group">
+      <input type="number" id="inputValue" placeholder="输入数值..." step="any" autofocus>
+      <select id="fromUnit"></select>
+    </div>
+
+    <div class="swap-row">
+      <button class="swap-btn" id="swapBtn" title="交换单位">⇅</button>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="outputValue" readonly placeholder="换算结果" style="cursor:default;">
+      <select id="toUnit"></select>
+    </div>
+
+    <div class="result-area" id="resultArea" style="display:none;">
+      <div class="result-main" id="resultMain"></div>
+      <div class="result-formula" id="resultFormula"></div>
+    </div>
+
+    <table class="ref-table" id="refTable" style="display:none;">
+      <thead><tr><th>常用换算</th><th>结果</th></tr></thead>
+      <tbody id="refBody"></tbody>
+    </table>
+  </div>
+
+  <div class="history-section" id="historySection" style="display:none;">
+    <div class="history-title">
+      <span>📋 换算历史</span>
+      <button class="clear-btn" id="clearHistory">清空</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<script>
+// ====== 单位数据定义 ======
+const categories = {
+  length: {
+    name: '长度', icon: '📏',
+    units: {
+      'km':     { name: '千米(km)',       factor: 1000 },
+      'm':      { name: '米(m)',           factor: 1 },
+      'dm':     { name: '分米(dm)',        factor: 0.1 },
+      'cm':     { name: '厘米(cm)',        factor: 0.01 },
+      'mm':     { name: '毫米(mm)',        factor: 0.001 },
+      'um':     { name: '微米(μm)',        factor: 1e-6 },
+      'nm':     { name: '纳米(nm)',        factor: 1e-9 },
+      'mi':     { name: '英里(mi)',        factor: 1609.344 },
+      'yd':     { name: '码(yd)',          factor: 0.9144 },
+      'ft':     { name: '英尺(ft)',        factor: 0.3048 },
+      'in':     { name: '英寸(in)',        factor: 0.0254 },
+      'li':     { name: '里',              factor: 500 },
+      'zhang':  { name: '丈',             factor: 10/3 },
+      'chi':    { name: '尺',              factor: 1/3 },
+      'cun':    { name: '寸',              factor: 1/30 },
+      'nmi':    { name: '海里(nmi)',       factor: 1852 },
+      'fen':    { name: '分',              factor: 1/300 },
+      'hao':    { name: '毫',              factor: 1/3000 },
+      'ld':     { name: '光年(ly)',         factor: 9.461e15 },
+      'au':     { name: '天文单位(AU)',     factor: 1.496e11 },
+      'pc':     { name: '秒差距(pc)',       factor: 3.086e16 },
+    }
+  },
+  area: {
+    name: '面积', icon: '📐',
+    units: {
+      'km2':    { name: '平方千米(km²)',    factor: 1e6 },
+      'ha':     { name: '公顷(ha)',          factor: 1e4 },
+      'mu':     { name: '亩',                factor: 1e4/15 },
+      'm2':     { name: '平方米(m²)',        factor: 1 },
+      'dm2':    { name: '平方分米(dm²)',     factor: 0.01 },
+      'cm2':    { name: '平方厘米(cm²)',     factor: 1e-4 },
+      'mm2':    { name: '平方毫米(mm²)',     factor: 1e-6 },
+      'mi2':    { name: '平方英里(mi²)',     factor: 2589988.11 },
+      'ac':     { name: '英亩(ac)',          factor: 4046.8564224 },
+      'ft2':    { name: '平方英尺(ft²)',     factor: 0.09290304 },
+      'in2':    { name: '平方英寸(in²)',     factor: 6.4516e-4 },
+      'qing':   { name: '顷',               factor: 66666.6667 },
+      'gongmu': { name: '公亩(a)',            factor: 100 },
+    }
+  },
+  volume: {
+    name: '体积', icon: '🧊',
+    units: {
+      'm3':     { name: '立方米(m³)',        factor: 1000 },
+      'L':      { name: '升(L)',              factor: 1 },
+      'mL':     { name: '毫升(mL)',           factor: 0.001 },
+      'cm3':    { name: '立方厘米(cm³)',      factor: 0.001 },
+      'mm3':    { name: '立方毫米(mm³)',      factor: 1e-6 },
+      'ft3':    { name: '立方英尺(ft³)',      factor: 28.316846592 },
+      'in3':    { name: '立方英寸(in³)',      factor: 0.016387064 },
+      'gal':    { name: '加仑(US gal)',       factor: 3.785411784 },
+      'qt':     { name: '夸脱(US qt)',        factor: 0.946352946 },
+      'pt':     { name: '品脱(US pt)',        factor: 0.473176473 },
+      'cup':    { name: '杯(US cup)',         factor: 0.2365882365 },
+      'floz':   { name: '液盎司(US fl oz)',   factor: 0.0295735295625 },
+      'galUK':  { name: '加仑(UK gal)',       factor: 4.54609 },
+      'qtUK':   { name: '夸脱(UK qt)',        factor: 1.1365225 },
+      'sheng':  { name: '斗',                 factor: 10 },
+      'ge':     { name: '合',                 factor: 0.1 },
+    }
+  },
+  mass: {
+    name: '质量', icon: '⚖️',
+    units: {
+      't':      { name: '吨(t)',            factor: 1000 },
+      'kg':     { name: '千克(kg)',         factor: 1 },
+      'gongjin':{ name: '公斤(kg)',         factor: 1 },
+      'g':      { name: '克(g)',            factor: 0.001 },
+      'mg':     { name: '毫克(mg)',         factor: 1e-6 },
+      'ug':     { name: '微克(μg)',         factor: 1e-9 },
+      'jin':    { name: '斤',               factor: 0.5 },
+      'liang':  { name: '两',               factor: 0.05 },
+      'qian':   { name: '钱',               factor: 0.005 },
+      'lb':     { name: '磅(lb)',           factor: 0.45359237 },
+      'oz':     { name: '盎司(oz)',         factor: 0.028349523125 },
+      'ct':     { name: '克拉(ct)',         factor: 0.0002 },
+      'gr':     { name: '格令(gr)',         factor: 6.479891e-5 },
+      'st':     { name: '石(英制)',         factor: 6.35029318 },
+      'tonUS':  { name: '美吨(短吨)',       factor: 907.18474 },
+      'tonUK':  { name: '英吨(长吨)',       factor: 1016.04691 },
+      'dan':    { name: '担',               factor: 50 },
+    }
+  },
+  temperature: {
+    name: '温度', icon: '🌡️',
+    units: {
+      'C': { name: '摄氏度(°C)' },
+      'F': { name: '华氏度(°F)' },
+      'K': { name: '开尔文(K)' },
+      'Re': { name: '列氏度(°Re)' },
+      'Ra': { name: '兰氏度(°Ra)' },
+    },
+    custom: true
+  },
+  speed: {
+    name: '速度', icon: '🚀',
+    units: {
+      'm/s':    { name: '米/秒(m/s)',       factor: 1 },
+      'km/h':   { name: '千米/时(km/h)',     factor: 1/3.6 },
+      'mph':    { name: '英里/时(mph)',      factor: 0.44704 },
+      'kn':     { name: '节(kn)',            factor: 0.514444 },
+      'ft/s':   { name: '英尺/秒(ft/s)',     factor: 0.3048 },
+      'mach':   { name: '马赫(Ma)',          factor: 340.29 },
+      'c':      { name: '光速(c)',           factor: 299792458 },
+      'km/s':   { name: '千米/秒(km/s)',     factor: 1000 },
+      'knotUK': { name: '节(UK)',            factor: 0.514773 },
+    }
+  },
+  time: {
+    name: '时间', icon: '⏱️',
+    units: {
+      'y':      { name: '年(y)',            factor: 31557600 },
+      'mon':    { name: '月(30天)',          factor: 2592000 },
+      'w':      { name: '周(w)',            factor: 604800 },
+      'd':      { name: '天(d)',            factor: 86400 },
+      'h':      { name: '时(h)',            factor: 3600 },
+      'min':    { name: '分(min)',          factor: 60 },
+      's':      { name: '秒(s)',            factor: 1 },
+      'ms':     { name: '毫秒(ms)',         factor: 0.001 },
+      'us':     { name: '微秒(μs)',         factor: 1e-6 },
+      'ns':     { name: '纳秒(ns)',         factor: 1e-9 },
+      'fortnight':{ name: '两周(fortnight)',factor: 1209600 },
+      'quarter':{ name: '季度(quarter)',    factor: 7889400 },
+    }
+  },
+  data: {
+    name: '数据', icon: '💾',
+    units: {
+      'PB':     { name: 'PB',               factor: 1e15 },
+      'TB':     { name: 'TB',               factor: 1e12 },
+      'GB':     { name: 'GB',               factor: 1e9 },
+      'MB':     { name: 'MB',               factor: 1e6 },
+      'KB':     { name: 'KB',               factor: 1e3 },
+      'B':      { name: 'B',                factor: 1 },
+      'bit':    { name: 'bit',              factor: 0.125 },
+      'PiB':    { name: 'PiB',              factor: 2**50 },
+      'TiB':    { name: 'TiB',              factor: 2**40 },
+      'GiB':    { name: 'GiB',              factor: 2**30 },
+      'MiB':    { name: 'MiB',              factor: 2**20 },
+      'KiB':    { name: 'KiB',              factor: 2**10 },
+      'EB':     { name: 'EB',               factor: 1e18 },
+      'EiB':    { name: 'EiB',              factor: 2**60 },
+    }
+  },
+  pressure: {
+    name: '压强', icon: '🌀',
+    units: {
+      'Pa':     { name: '帕斯卡(Pa)',       factor: 1 },
+      'kPa':    { name: '千帕(kPa)',        factor: 1000 },
+      'MPa':    { name: '兆帕(MPa)',        factor: 1e6 },
+      'GPa':    { name: '吉帕(GPa)',        factor: 1e9 },
+      'bar':    { name: '巴(bar)',          factor: 1e5 },
+      'mbar':   { name: '毫巴(mbar)',       factor: 100 },
+      'atm':    { name: '标准大气压(atm)',  factor: 101325 },
+      'mmHg':   { name: '毫米汞柱(mmHg)',   factor: 133.322 },
+      'psi':    { name: '磅/平方英寸(psi)', factor: 6894.757 },
+      'kgfcm2': { name: '千克力/厘米²',     factor: 98066.5 },
+      'torr':   { name: '托(torr)',         factor: 133.322368 },
+      'inHg':   { name: '英寸汞柱(inHg)',   factor: 3386.389 },
+    }
+  },
+  power: {
+    name: '功率', icon: '⚡',
+    units: {
+      'W':      { name: '瓦特(W)',          factor: 1 },
+      'kW':     { name: '千瓦(kW)',         factor: 1000 },
+      'MW':     { name: '兆瓦(MW)',         factor: 1e6 },
+      'GW':     { name: '吉瓦(GW)',         factor: 1e9 },
+      'hp':     { name: '马力(hp)',         factor: 745.7 },
+      'hpM':    { name: '公制马力(PS)',     factor: 735.49875 },
+      'cal/s':  { name: '卡/秒(cal/s)',     factor: 4.184 },
+      'BTU/h':  { name: 'BTU/时',           factor: 0.29307107 },
+      'kcal/h': { name: '千卡/时(kcal/h)',  factor: 1.163 },
+      'J/s':    { name: '焦耳/秒(J/s)',     factor: 1 },
+      'kVA':    { name: '千伏安(kVA)',      factor: 1000 },
+    }
+  },
+  fuel: {
+    name: '油耗', icon: '⛽',
+    units: {
+      'L100km': { name: 'L/100km',          factor: 1 },
+      'kmL':    { name: 'km/L',             factor: -1 },
+      'mpgUS':  { name: 'mpg(US)',          factor: -2 },
+      'mpgUK':  { name: 'mpg(UK)',          factor: -3 },
+    },
+    custom: true
+  },
+  econsumption: {
+    name: '电耗', icon: '🔋',
+    units: {
+      'kWh100km': { name: 'kWh/100km',       factor: 1 },
+      'kmkWh':     { name: 'km/kWh',           factor: -1 },
+      'Whkm':      { name: 'Wh/km',            factor: -2 },
+      'mikWh':     { name: 'mi/kWh',           factor: -3 },
+      'kWhmi':     { name: 'kWh/mi',           factor: -4 },
+      'Le100km':   { name: 'L油当量/100km*',   factor: -5 },
+    },
+    custom: true,
+    note: '* L油当量按 1L 汽油 ≈ 8.89 kWh 折算'
+  },
+  energy: {
+    name: '能量', icon: '🔥',
+    units: {
+      'J':      { name: '焦耳(J)',           factor: 1 },
+      'kJ':     { name: '千焦(kJ)',          factor: 1000 },
+      'MJ':     { name: '兆焦(MJ)',          factor: 1e6 },
+      'cal':    { name: '卡(cal)',           factor: 4.184 },
+      'kcal':   { name: '千卡(kcal)',        factor: 4184 },
+      'BTU':    { name: '英热单位(BTU)',     factor: 1055.06 },
+      'kWh':    { name: '千瓦时(kWh)',       factor: 3.6e6 },
+      'Wh':     { name: '瓦时(Wh)',          factor: 3600 },
+      'eV':     { name: '电子伏特(eV)',      factor: 1.602176634e-19 },
+      'erg':    { name: '尔格(erg)',         factor: 1e-7 },
+      'therm':  { name: '撒姆(therm)',       factor: 1.055e8 },
+      'ftlb':   { name: '英尺磅(ft·lbf)',    factor: 1.355817948 },
+    }
+  },
+  angle: {
+    name: '角度', icon: '📐',
+    units: {
+      'deg':    { name: '度(°)',             factor: 1 },
+      'rad':    { name: '弧度(rad)',         factor: 57.295779513 },
+      'gon':    { name: '百分度(gon)',       factor: 0.9 },
+      'turn':   { name: '圈(turn)',          factor: 360 },
+      'arcmin': { name: '角分(′)',           factor: 1/60 },
+      'arcsec': { name: '角秒(″)',           factor: 1/3600 },
+      'mil':    { name: '密位(mil)',         factor: 0.05625 },
+    }
+  },
+  density: {
+    name: '密度', icon: '🧱',
+    units: {
+      'kgm3':   { name: '千克/米³',          factor: 1 },
+      'gL':     { name: '克/升(g/L)',        factor: 1 },
+      'kgL':    { name: '千克/升(kg/L)',     factor: 1000 },
+      'gcm3':   { name: '克/厘米³(g/cm³)',   factor: 1000 },
+      'lbft3':  { name: '磅/英尺³',         factor: 16.018463 },
+      'lbin3':  { name: '磅/英寸³',         factor: 27679.90471 },
+    }
+  }
+};
+
+// ====== 温度换算 ======
+function convertTemperature(val, from, to) {
+  if (from === to) return val;
+  let c;
+  switch(from) {
+    case 'C': c = val; break;
+    case 'F': c = (val - 32) * 5/9; break;
+    case 'K': c = val - 273.15; break;
+    case 'Re': c = val * 5/4; break;
+    case 'Ra': c = (val - 491.67) * 5/9; break;
+  }
+  switch(to) {
+    case 'C': return c;
+    case 'F': return c * 9/5 + 32;
+    case 'K': return c + 273.15;
+    case 'Re': return c * 4/5;
+    case 'Ra': return c * 9/5 + 491.67;
+  }
+}
+
+// ====== 油耗换算 ======
+function convertFuel(val, from, to) {
+  if (from === to) return val;
+  let l100;
+  switch(from) {
+    case 'L100km': l100 = val; break;
+    case 'kmL': l100 = 100 / val; break;
+    case 'mpgUS': l100 = 235.215 / val; break;
+    case 'mpgUK': l100 = 282.481 / val; break;
+  }
+  switch(to) {
+    case 'L100km': return l100;
+    case 'kmL': return 100 / l100;
+    case 'mpgUS': return 235.215 / l100;
+    case 'mpgUK': return 282.481 / l100;
+  }
+}
+
+// ====== 电耗换算 ======
+// 基准单位：kWh/100km
+// 1 L汽油 ≈ 8.89 kWh（热值折算）
+const KWH_PER_LITER_GASOLINE = 8.89;
+const KM_PER_MILE = 1.609344;
+
+function convertEConsumption(val, from, to) {
+  if (from === to) return val;
+  // 统一转到 kWh/100km
+  let kwh100;
+  switch(from) {
+    case 'kWh100km': kwh100 = val; break;
+    case 'kmkWh':     kwh100 = 100 / val; break;              // km/kWh → kWh/100km
+    case 'Whkm':      kwh100 = val / 10; break;               // Wh/km → kWh/100km (÷10)
+    case 'mikWh':     kwh100 = 100 / (val * KM_PER_MILE); break; // mi/kWh → kWh/100km
+    case 'kWhmi':     kwh100 = val * KM_PER_MILE; break; // kWh/mi → kWh/100km (×1.609344)
+    case 'Le100km':   kwh100 = val * KWH_PER_LITER_GASOLINE; break; // L油当量 → kWh/100km
+  }
+  // 从 kWh/100km 转到目标
+  switch(to) {
+    case 'kWh100km': return kwh100;
+    case 'kmkWh':     return 100 / kwh100;
+    case 'Whkm':      return kwh100 * 10;
+    case 'mikWh':     return 100 / (kwh100 / KM_PER_MILE);
+    case 'kWhmi':     return kwh100 / KM_PER_MILE;
+    case 'Le100km':   return kwh100 / KWH_PER_LITER_GASOLINE;
+  }
+}
+
+// ====== 核心换算 ======
+function convert(val, from, to, cat) {
+  if (isNaN(val) || val === '') return '';
+  const catData = categories[cat];
+  if (catData.custom) {
+    if (cat === 'temperature') return convertTemperature(val, from, to);
+    if (cat === 'fuel') return convertFuel(val, from, to);
+    if (cat === 'econsumption') return convertEConsumption(val, from, to);
+  }
+  const fromFactor = catData.units[from].factor;
+  const toFactor = catData.units[to].factor;
+  return val * fromFactor / toFactor;
+}
+
+// ====== 格式化数字 ======
+function formatNum(n) {
+  if (n === '' || n === undefined) return '';
+  const num = parseFloat(n);
+  if (isNaN(num)) return n;
+  if (Math.abs(num) >= 1e15 || (Math.abs(num) < 1e-10 && num !== 0)) {
+    return num.toExponential(6);
+  }
+  const s = num.toPrecision(10);
+  return parseFloat(s).toString();
+}
+
+// ====== 状态 ======
+let currentCat = 'length';
+let history = JSON.parse(localStorage.getItem('convHistory') || '[]');
+
+// ====== DOM ======
+const $tabs = document.getElementById('tabs');
+const $input = document.getElementById('inputValue');
+const $output = document.getElementById('outputValue');
+const $from = document.getElementById('fromUnit');
+const $to = document.getElementById('toUnit');
+const $swap = document.getElementById('swapBtn');
+const $resultArea = document.getElementById('resultArea');
+const $resultMain = document.getElementById('resultMain');
+const $resultFormula = document.getElementById('resultFormula');
+const $refTable = document.getElementById('refTable');
+const $refBody = document.getElementById('refBody');
+const $histSec = document.getElementById('historySection');
+const $histList = document.getElementById('historyList');
+const $clearHist = document.getElementById('clearHistory');
+
+// ====== 渲染标签 ======
+function renderTabs() {
+  $tabs.innerHTML = '';
+  for (const [key, cat] of Object.entries(categories)) {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (key === currentCat ? ' active' : '');
+    btn.innerHTML = `${cat.icon} ${cat.name}`;
+    btn.onclick = () => { currentCat = key; renderTabs(); renderSelects(); doConvert(); };
+    $tabs.appendChild(btn);
+  }
+}
+
+// ====== 渲染下拉 ======
+function renderSelects() {
+  const units = categories[currentCat].units;
+  const keys = Object.keys(units);
+  $from.innerHTML = '';
+  $to.innerHTML = '';
+  keys.forEach((k, i) => {
+    const o1 = new Option(units[k].name, k);
+    const o2 = new Option(units[k].name, k);
+    $from.add(o1);
+    $to.add(o2);
+  });
+  $from.value = keys[0];
+  $to.value = keys.length > 1 ? keys[1] : keys[0];
+}
+
+// ====== 换算执行 ======
+function doConvert() {
+  const val = parseFloat($input.value);
+  if (isNaN(val) || $input.value === '') {
+    $output.value = '';
+    $resultArea.style.display = 'none';
+    $refTable.style.display = 'none';
+    return;
+  }
+  const from = $from.value;
+  const to = $to.value;
+  const result = convert(val, from, to, currentCat);
+  $output.value = formatNum(result);
+
+  $resultArea.style.display = 'block';
+  const fromName = categories[currentCat].units[from].name;
+  const toName = categories[currentCat].units[to].name;
+  $resultMain.textContent = `${val} ${fromName} = ${formatNum(result)} ${toName}`;
+  $resultFormula.textContent = `1 ${fromName} = ${formatNum(convert(1, from, to, currentCat))} ${toName}`;
+
+  renderRefTable(val, from);
+  addHistory(val, fromName, formatNum(result), toName);
+}
+
+// ====== 参考表 ======
+function renderRefTable(val, from) {
+  const units = categories[currentCat].units;
+  const keys = Object.keys(units);
+  if (keys.length <= 2) { $refTable.style.display = 'none'; return; }
+  $refTable.style.display = 'table';
+  $refBody.innerHTML = '';
+  const common = keys.filter(k => k !== from).slice(0, 6);
+  common.forEach(k => {
+    const r = convert(val, from, k, currentCat);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>1 ${units[from].name}</td><td class="val" data-unit="${k}">${formatNum(convert(1, from, k, currentCat))} ${units[k].name}</td>`;
+    $refBody.appendChild(tr);
+  });
+  $refBody.querySelectorAll('.val').forEach(el => {
+    el.onclick = () => {
+      $to.value = el.dataset.unit;
+      doConvert();
+    };
+  });
+}
+
+// ====== 历史 ======
+function addHistory(val, fromName, result, toName) {
+  const entry = `${val} ${fromName} → ${result} ${toName}`;
+  history = history.filter(h => h !== entry);
+  history.unshift(entry);
+  if (history.length > 20) history.pop();
+  localStorage.setItem('convHistory', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  if (history.length === 0) { $histSec.style.display = 'none'; return; }
+  $histSec.style.display = 'block';
+  $histList.innerHTML = '';
+  history.slice(0, 8).forEach(h => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.textContent = h;
+    $histList.appendChild(div);
+  });
+}
+
+$clearHist.onclick = () => {
+  history = [];
+  localStorage.removeItem('convHistory');
+  renderHistory();
+};
+
+// ====== 交换 ======
+$swap.onclick = () => {
+  const tmp = $from.value;
+  $from.value = $to.value;
+  $to.value = tmp;
+  doConvert();
+};
+
+// ====== 事件 ======
+$input.addEventListener('input', doConvert);
+$from.addEventListener('change', doConvert);
+$to.addEventListener('change', doConvert);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Tab' && !e.shiftKey && document.activeElement === $input) {}
+});
+
+// ====== 初始化 ======
+renderTabs();
+renderSelects();
+renderHistory();
+doConvert();
+</script>
+
+</body>
+</html>
+

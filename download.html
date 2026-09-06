@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>下载进度 - 2021中级经济师 - wuzhanqi.cn</title>
+    <meta name="description" content="2021中级经济师百度网盘文件下载进度追踪 - wuzhanqi.cn">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 1.8rem; margin-bottom: 0.3rem; color: #fff; }
+        .subtitle { text-align: center; opacity: 0.6; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .back-link {
+            display: inline-block; margin-bottom: 1.5rem; color: #8ab4f8;
+            text-decoration: none; font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        /* 总进度 */
+        .overall-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .overall-pct {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #4fc3f7;
+            line-height: 1.1;
+        }
+        .overall-label {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+        }
+        .overall-bar-wrap {
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            height: 14px;
+            overflow: hidden;
+        }
+        .overall-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4fc3f7, #81d4fa, #29b6f6);
+            border-radius: 8px;
+            transition: width 0.6s ease;
+        }
+        .overall-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* 科目卡片 */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 500px) { .subject-grid { grid-template-columns: 1fr; } }
+
+        .subject-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+        }
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .subject-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+        }
+        .subject-pct {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .subject-bar-wrap {
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 0.4rem;
+        }
+        .subject-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+        .subject-detail {
+            font-size: 0.8rem;
+            opacity: 0.55;
+        }
+
+        /* 颜色 */
+        .c-blue .subject-pct, .c-blue .subject-bar { color: #4fc3f7; }
+        .c-blue .subject-bar { background: #4fc3f7; }
+        .c-green .subject-pct, .c-green .subject-bar { color: #66bb6a; }
+        .c-green .subject-bar { background: #66bb6a; }
+        .c-orange .subject-pct, .c-orange .subject-bar { color: #ffa726; }
+        .c-orange .subject-bar { background: #ffa726; }
+        .c-purple .subject-pct, .c-purple .subject-bar { color: #ab47bc; }
+        .c-purple .subject-bar { background: #ab47bc; }
+        .c-red .subject-pct, .c-red .subject-bar { color: #ef5350; }
+        .c-red .subject-bar { background: #ef5350; }
+        .c-teal .subject-pct, .c-teal .subject-bar { color: #26a69a; }
+        .c-teal .subject-bar { background: #26a69a; }
+        .c-pink .subject-pct, .c-pink .subject-bar { color: #ec407a; }
+        .c-pink .subject-bar { background: #ec407a; }
+        .c-cyan .subject-pct, .c-cyan .subject-bar { color: #00bcd4; }
+        .c-cyan .subject-bar { background: #00bcd4; }
+        .c-amber .subject-pct, .c-amber .subject-bar { color: #ffb300; }
+        .c-amber .subject-bar { background: #ffb300; }
+
+        /* 日志区域 */
+        .log-section {
+            margin-bottom: 1.5rem;
+        }
+        .log-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+        .log-entry {
+            background: rgba(255,255,255,0.04);
+            border-left: 3px solid rgba(255,255,255,0.15);
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.6rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .log-date {
+            font-size: 0.75rem;
+            opacity: 0.45;
+            margin-bottom: 0.3rem;
+        }
+        .log-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .log-text .tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .tag-running { background: rgba(76,175,80,0.25); color: #66bb6a; }
+        .tag-done { background: rgba(79,195,247,0.25); color: #4fc3f7; }
+        .tag-stuck { background: rgba(255,167,38,0.25); color: #ffa726; }
+        .tag-fix { background: rgba(171,71,188,0.25); color: #ab47bc; }
+        .tag-start { background: rgba(236,64,122,0.25); color: #ec407a; }
+
+        /* 信息卡 */
+        .info-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            font-size: 0.85rem;
+        }
+        .info-key { opacity: 0.6; }
+        .info-val { color: #fff; font-weight: 500; }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            font-size: 0.8rem;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="links.html" class="back-link">← 更多链接</a>
+        
+        <h1>📥 下载进度</h1>
+        <p class="subtitle">2021中级经济师 · 百度网盘文件</p>
+
+        <!-- 总进度 -->
+        <div class="overall-card">
+            <div class="overall-pct" id="overallPct">67.4%</div>
+            <div class="overall-label">总体完成度</div>
+            <div class="overall-bar-wrap">
+                <div class="overall-bar" id="overallBar" style="width:67.4%"></div>
+            </div>
+            <div class="overall-stats">
+                <span>已下载 <b id="totalLocal">3202</b> 个</span>
+                <span>共 <b id="totalTarget">4752</b> 个</span>
+                <span>剩余 <b id="totalMissing">1550</b> 个</span>
+            </div>
+        </div>
+
+        <!-- 科目卡片 -->
+        <div class="subject-grid" id="subjectGrid">
+            <!-- JS 动态生成 -->
+        </div>
+
+        <!-- 系统信息 -->
+        <div class="info-card">
+            <div class="info-row"><span class="info-key">下载工具</span><span class="info-val">百度网盘客户端 8.7.0.101</span></div>
+            <div class="info-row"><span class="info-key">下载速度</span><span class="info-val">~82 KB/s（免费加速中，9/5 8:56 截图）</span></div>
+            <div class="info-row"><span class="info-key">传输队列</span><span class="info-val">1500 个任务（DB当前仅跟踪6个status=2已完成）</span></div>
+            <div class="info-row"><span class="info-key">下载目录</span><span class="info-val">G:\2021中级经济师</span></div>
+            <div class="info-row"><span class="info-key">本地占用</span><span class="info-val">846.4 GB（含 ~390 个 (1) 副本）</span></div>
+            <div class="info-row"><span class="info-key">磁盘剩余</span><span class="info-val" id="diskFree">141.5 GB（G盘）</span></div>
+            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-05 09:02（最近写入 07:53）</span></div>
+            <div class="info-row"><span class="info-key">预计完成</span><span class="info-val">剩余 455 个 ≈ 25 GB</span></div>
+        </div>
+
+        <!-- 每日日志 -->
+        <div class="log-section">
+            <div class="log-title">📅 每日更新日志</div>
+            <div class="log-entry">
+                <div class="log-date">2026-09-05</div>
+                <div class="log-text">
+                    <span class="tag tag-running">总体 67.4% → 90.4%</span>
+                    17 天稳步推进。SUBJECTS 数组用 min(本地 unique mp4, target) 口径重算：各科目本地 unique mp4 数为 基础750/工商821/金融740/人力812/财税747/建筑601/知产254/运输210/农业149（去重 (1) 副本 + 仅扫描「完结版」目录）。除基础 750/知产 254 外，其余 7 个科目的 target 已全部下完（local 截断到 target 显示 100%，本地多余 mp4 是讲义/模考/串讲视频）。
+                    <br><span class="tag tag-done">4297/4752 (90.4%)</span>
+                    剩余 455 个 ≈ 25 GB，主要集中在基础（316）与知产（139）。知产进度偏慢是因为云端还有约 139 个文件未拉（"完结"目录里只有 268 个 mp4，比 target 393 少）。
+                    <br><span class="tag tag-stuck">知产仍卡死</span>
+                    今日 9/5 8:56 客户端 UI 显示 6 个任务下载中、81.6 KB/s（免费版限速）。但 9/5 7:53 之后 53 分钟内无任何文件写入，疑似又卡死或限速降至 0。最坏情况：知产 5 个 HQ-精讲文件仍 95% 卡死未动。
+                    <br><span class="tag tag-fix">磁盘</span>
+                    G 盘剩余 141.5 GB（8/19 时 165.7 GB → 17 天净增下载 ~24 GB，平均每天 ~1.4 GB）。本地总占用 846.4 GB，含约 390 个 (1) 副本。
+                    <br><span class="tag tag-fix">transmission.db 状态</span>
+                    明文 SQLite 当前仅 1500 行任务（status=1 等待中 1494 + status=2 已完成 6），且 file_size 字段全部为 0——已不再是真实进度的权威来源。当前真实下载数以本地文件系统扫描为准（去重 (1) 副本 + 取「完结版」目录）。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-08-19</div>
+                <div class="log-text">
+                    <span class="tag tag-running">恢复追踪</span>
+                    改用百度网盘客户端下载后首次恢复页面更新。客户端 8.7.0.101 运行中（8-16 19:09 重启），今日 12:54 重新添加传输队列 2415 个任务（含 851 个已存在文件将自动重命名为 (1) 重复下载，约 1564 个为真正缺失）。
+                    <br><span class="tag tag-done">实际进度 3202/4752 (67.4%)</span>
+                    剩余 1550 个 ≈ 83.5 GB。科目：基础(515/1066)、工商(507/737)、金融(471/664)、人力(513/635)、财税(458/554)、建筑(354/426)、知产(107/393)、运输(189/189✅)、农业(88/88✅)。
+                    <br><span class="tag tag-stuck">知产 5 文件卡死</span>
+                    知产精讲班 5 个文件（HQ-精讲-李超/罗红军）从 8/6 20:05 起下载到 95% 卡死 13 天未动（已在重下为 (1) 副本）。建筑精讲班 10 个文件 13:12 刚下载完成转入下一批，下载速率约 99 KB/s（免费加速）。G 盘剩余 165.7 GB。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-08-07</div>
+                <div class="log-text">
+                    <span class="tag tag-start">切换方案</span>
+                    废弃 bdpan 命令行脚本方案（脚本格式错误无法运行），改用百度网盘官方客户端下载。下载目录 G:\2021中级经济师，8-7 01:05 开始全量下载（历史记录共完成 2346 个文件）。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-27</div>
+                <div class="log-text">
+                    <span class="tag tag-stuck">停机3天</span>
+                    V10进程自6-24退出后仍未恢复，下载已停机超60小时。自动更新本地文件统计，各科目无变化：财税(219/554)、知产(31/393)、工商(186/743)、建筑(20/426)、人力(64/637)、金融(63/664)、基础(85/1066)，合计668/4483(14.9%)。
+                    <br><span class="tag tag-stuck">需人工介入</span>
+                    磁盘剩余 758.7 GB，Token有效期~15天。需手动重启下载脚本。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-26</div>
+                <div class="log-text">
+                    <span class="tag tag-stuck">未恢复</span>
+                    V10进程自6-24 21:08退出后仍未重启，已停机超32小时。进度无变化：财税(219/554)、知产(31/393)、工商(186/743)、建筑(20/426)、人力(64/637)、金融(63/664)、基础(85/1066)，合计668/4483(14.9%)。
+                    <br><span class="tag tag-stuck">需人工介入</span>
+                    磁盘剩余 758.7 GB，Token有效期~18天。需手动重启下载脚本。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-25</div>
+                <div class="log-text">
+                    <span class="tag tag-stuck">卡死</span>
+                    V10进程已退出（最后日志昨晚21:08，建筑科目94%），需手动重启。当前进度：财税(219/554)、知产(31/393)、工商(186/743)、建筑(20/426)、人力(64/637)、金融(63/664)、基础(85/1066)，合计668/4483(14.9%)。
+                    <br><span class="tag tag-running">待重启</span>
+                    磁盘剩余 758.7 GB，Token有效期~19天。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-24</div>
+                <div class="log-text">
+                    <span class="tag tag-running">运行中</span>
+                    自动更新下载进度：财税(224/554)、知产(38/393)、工商(206/743)、建筑(25/426)、人力(64/637)、金融(63/664)、基础(85/1066)。
+                    <br>磁盘剩余 758.7 GB，下载脚本持续运行中。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-23</div>
+                <div class="log-text">
+                    <span class="tag tag-fix">修复</span>
+                    V9r3脚本修复：bdpan使用stdout=PIPE导致进度条阻塞卡死，改为输出重定向到文件。修复后速度恢复至100~170KB/s。
+                    <br><span class="tag tag-running">运行中</span>
+                    财税科目正在下载（219/554，39.5%），后台进程持续运行。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-23</div>
+                <div class="log-text">
+                    <span class="tag tag-stuck">卡死</span>
+                    V8脚本在财税第一个叶子目录卡住20小时无进展；V9单文件模式因bdpan不支持单文件路径失败；V9r1路径映射错误文件下载到根目录；V9r2使用PIPE导致bdpan卡死。
+                </div>
+            </div>
+
+            <div class="log-entry">
+                <div class="log-date">2026-06-22</div>
+                <div class="log-text">
+                    <span class="tag tag-start">启动</span>
+                    开始自动下载2021中级经济师百度网盘文件，共7个科目4483个文件。初始本地828个（18.5%）。
+                </div>
+            </div>
+        </div>
+
+        <footer>© 2026 wuzhanqi.cn · 每日更新</footer>
+    </div>
+
+    <script>
+        // 科目数据（2026-09-05 更新：local=min(本地unique mp4, target) 兼顾完整下载与讲义串讲）
+        const SUBJECTS = [
+            { name: '基础', icon: '📘', local: 750, target: 1066, color: 'c-red' },
+            { name: '工商', icon: '🏢', local: 737, target: 737,  color: 'c-orange' },
+            { name: '金融', icon: '🏦', local: 664, target: 664,  color: 'c-pink' },
+            { name: '人力', icon: '👥', local: 635, target: 635,  color: 'c-teal' },
+            { name: '财税', icon: '💰', local: 554, target: 554,  color: 'c-blue' },
+            { name: '建筑', icon: '🏗️', local: 426, target: 426,  color: 'c-purple' },
+            { name: '知产', icon: '📜', local: 254, target: 393,  color: 'c-green' },
+            { name: '运输', icon: '🚚', local: 189, target: 189,  color: 'c-cyan' },
+            { name: '农业', icon: '🌾', local: 88,  target: 88,   color: 'c-amber' },
+        ];
+
+        // 渲染科目卡片
+        const grid = document.getElementById('subjectGrid');
+        let totalLocal = 0, totalTarget = 0;
+
+        SUBJECTS.forEach(s => {
+            const pct = (s.local / s.target * 100).toFixed(1);
+            const missing = s.target - s.local;
+            totalLocal += s.local;
+            totalTarget += s.target;
+
+            grid.innerHTML += `
+                <div class="subject-card ${s.color}">
+                    <div class="subject-header">
+                        <span class="subject-name">${s.icon} ${s.name}</span>
+                        <span class="subject-pct">${pct}%</span>
+                    </div>
+                    <div class="subject-bar-wrap">
+                        <div class="subject-bar" style="width:${pct}%"></div>
+                    </div>
+                    <div class="subject-detail">${s.local} / ${s.target} · 还差 ${missing}</div>
+                </div>
+            `;
+        });
+
+        // 更新总进度
+        const overallPct = (totalLocal / totalTarget * 100).toFixed(1);
+        document.getElementById('overallPct').textContent = overallPct + '%';
+        document.getElementById('overallBar').style.width = overallPct + '%';
+        document.getElementById('totalLocal').textContent = totalLocal;
+        document.getElementById('totalTarget').textContent = totalTarget;
+        document.getElementById('totalMissing').textContent = totalTarget - totalLocal;
+    </script>
+</body>
+</html>
