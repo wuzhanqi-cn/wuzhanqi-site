@@ -461,6 +461,81 @@
             margin-top: 4px;
         }
         
+
+        /* ===== 精选推荐 ===== */
+        .recommend-section {
+            width: 100%;
+            max-width: 700px;
+            margin: 2rem auto 1rem;
+            padding: 0 1rem;
+            animation: fadeInUp 0.8s ease 0.7s backwards;
+        }
+        .recommend-title {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .recommend-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+        .recommend-card {
+            flex: 1 1 280px;
+            min-width: 0;
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.25);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .recommend-card:hover {
+            background: rgba(255,255,255,0.22);
+            transform: translateY(-3px);
+            border-color: rgba(255,255,255,0.45);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        .recommend-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .recommend-card .card-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+        .recommend-card .card-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .recommend-card .card-badge {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            background: rgba(255,215,0,0.25);
+            border: 1px solid rgba(255,215,0,0.5);
+            border-radius: 10px;
+            color: #ffe082;
+            white-space: nowrap;
+        }
+        .recommend-card .card-desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        .recommend-card .card-link {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            word-break: break-all;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 12px;
@@ -546,7 +621,7 @@
         <div class="header">
             
             <p class="domain">wuzhanqi.cn</p>
-            <p class="tagline">静水流深，万物生长。这里是一片安静的数字角落。</p>
+            <p class="tagline">静水流深，万物生长。这里是吴展旗的个人数字角落 —— 记录生活、分享工具、每日要闻。</p>
         </div>
         
         <div class="clocks-wrapper">
@@ -600,6 +675,39 @@
         </div>
     </div>
     
+
+    <!-- ===== 精选推荐 ===== -->
+    <div class="recommend-section">
+        <h2 class="recommend-title">✨ 精选推荐</h2>
+        <div class="recommend-grid">
+            <a href="https://cloud.siliconflow.cn/i/AtL6ouxX" target="_blank" rel="noopener noreferrer" class="recommend-card">
+                <div class="card-header">
+                    <span class="card-icon">🤖</span>
+                    <span class="card-name">硅基流动 SiliconFlow</span>
+                    <span class="card-badge">注册送16元</span>
+                </div>
+                <div class="card-desc">国内领先的 AI 大模型聚合平台，集成 DeepSeek、Qwen、GLM 等主流模型，API 价格实惠、响应快。新用户完成实名认证即送 16 元代金券，可用于所有模型调用。本站每日新闻摘要即由该平台 AI 生成。</div>
+                <div class="card-link">cloud.siliconflow.cn/i/AtL6ouxX</div>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="recommend-card">
+                <div class="card-header">
+                    <span class="card-icon">🐙</span>
+                    <span class="card-name">GitHub</span>
+                </div>
+                <div class="card-desc">全球最大的代码托管与开源协作平台。本站源码托管于此，每日新闻自动更新由 GitHub Actions 驱动。免费、稳定，是程序员和独立开发者的必备工具。</div>
+                <div class="card-link">github.com</div>
+            </a>
+            <a href="https://www.cloudflare.com" target="_blank" rel="noopener noreferrer" class="recommend-card">
+                <div class="card-header">
+                    <span class="card-icon">☁️</span>
+                    <span class="card-name">Cloudflare</span>
+                </div>
+                <div class="card-desc">全球 CDN 与边缘计算平台，提供免费的静态网站托管（Pages）、DNS 解析和 SSL 证书。本站即部署在 Cloudflare Pages 上，访问速度快、全球加速、零成本。</div>
+                <div class="card-link">cloudflare.com</div>
+            </a>
+        </div>
+    </div>
+
     <!-- ===== 留言板 ===== -->
     <div class="guestbook">
         <h2 class="guestbook-title">💬 留言板</h2>
