@@ -2,7 +2,7 @@ name: Daily News Summary
 
 on:
   schedule:
-    - cron: "0 15 * * *"  # 15:00 UTC = 23:00 北京时间
+    - cron: "30 13 * * *"  # 13:30 UTC = 21:30 北京时间
   workflow_dispatch:
 
 permissions:
