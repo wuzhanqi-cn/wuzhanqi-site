@@ -14,6 +14,7 @@ import json
 import re
 import os
 import sys
+import threading
 from datetime import datetime
 
 # ============== 配置 ==============
@@ -39,7 +40,7 @@ HEADERS = {
 }
 
 # ============== 工具函数 ==============
-def fetch_url(url, timeout=30, referer=None, extra_headers=None):
+def fetch_url(url, timeout=10, referer=None, extra_headers=None):
     """抓取 URL 内容，返回原始 bytes"""
     headers = dict(HEADERS)
     if referer:
@@ -123,13 +124,34 @@ def fetch_yw_column(page_id, category):
         return []
 
 def fetch_yw_all():
-    """抓取义乌政府门户所有栏目"""
+    """抓取义乌政府门户所有栏目（并发）"""
+    results = {}
+    lock = threading.Lock()
+    
+    def fetch_one(col):
+        try:
+            print(f'  [yw] 抓取 {col["category"]} (pageId={col["pageId"]})...')
+            news = fetch_yw_column(col['pageId'], col['category'])
+            with lock:
+                results[col['category']] = news
+            print(f'    -> {col["category"]} 获取 {len(news)} 条')
+        except Exception as e:
+            print(f'    -> {col["category"]} 抓取失败: {e}')
+            with lock:
+                results[col['category']] = []
+    
+    threads = []
+    for col in YW_COLUMNS:
+        t = threading.Thread(target=fetch_one, args=(col,))
+        threads.append(t)
+        t.start()
+    
+    for t in threads:
+        t.join(timeout=30)  # 单个栏目最多等30秒
+    
     all_news = []
     for col in YW_COLUMNS:
-        print(f'  [yw] 抓取 {col["category"]} (pageId={col["pageId"]})...')
-        news = fetch_yw_column(col['pageId'], col['category'])
-        print(f'    -> 获取 {len(news)} 条')
-        all_news.extend(news)
+        all_news.extend(results.get(col['category'], []))
     return all_news
 
 # ============== 抓取 zgyww.cn ==============
@@ -199,7 +221,7 @@ def load_existing_news():
     """从线上下载现有 news.json"""
     try:
         print('  下载现有 news.json...')
-        raw = fetch_url(EXISTING_NEWS_URL, timeout=30)
+        raw = fetch_url(EXISTING_NEWS_URL, timeout=10)
         data = json.loads(raw.decode('utf-8'))
         if isinstance(data, dict) and 'news' in data:
             news = data['news']
