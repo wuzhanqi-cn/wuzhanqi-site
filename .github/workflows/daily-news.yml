@@ -23,7 +23,7 @@ jobs:
       - name: Run news fetcher
         run: python fetch_news.py
 
-      - name: Commit and push changes
+      - name: Commit news.json
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -34,3 +34,10 @@ jobs:
             git commit -m "每日新闻更新 $(date +'%Y-%m-%d')"
             git push
           fi
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=wuzhanqi
