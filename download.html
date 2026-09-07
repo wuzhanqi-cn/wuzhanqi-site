@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -207,15 +207,15 @@
 
         <!-- 总进度 -->
         <div class="overall-card">
-            <div class="overall-pct" id="overallPct">67.4%</div>
+            <div class="overall-pct" id="overallPct">98.9%</div>
             <div class="overall-label">总体完成度</div>
             <div class="overall-bar-wrap">
-                <div class="overall-bar" id="overallBar" style="width:67.4%"></div>
+                <div class="overall-bar" id="overallBar" style="width:98.9%"></div>
             </div>
             <div class="overall-stats">
-                <span>已下载 <b id="totalLocal">3202</b> 个</span>
+                <span>已下载 <b id="totalLocal">4699</b> 个</span>
                 <span>共 <b id="totalTarget">4752</b> 个</span>
-                <span>剩余 <b id="totalMissing">1550</b> 个</span>
+                <span>剩余 <b id="totalMissing">53</b> 个</span>
             </div>
         </div>
 
@@ -230,15 +230,29 @@
             <div class="info-row"><span class="info-key">下载速度</span><span class="info-val">~82 KB/s（免费加速中，9/5 8:56 截图）</span></div>
             <div class="info-row"><span class="info-key">传输队列</span><span class="info-val">1500 个任务（DB当前仅跟踪6个status=2已完成）</span></div>
             <div class="info-row"><span class="info-key">下载目录</span><span class="info-val">G:\2021中级经济师</span></div>
-            <div class="info-row"><span class="info-key">本地占用</span><span class="info-val">846.4 GB（含 ~390 个 (1) 副本）</span></div>
-            <div class="info-row"><span class="info-key">磁盘剩余</span><span class="info-val" id="diskFree">141.5 GB（G盘）</span></div>
-            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-05 09:02（最近写入 07:53）</span></div>
-            <div class="info-row"><span class="info-key">预计完成</span><span class="info-val">剩余 455 个 ≈ 25 GB</span></div>
+            <div class="info-row"><span class="info-key">本地占用</span><span class="info-val">855.9 GB（副本已清零）</span></div>
+            <div class="info-row"><span class="info-key">磁盘剩余</span><span class="info-val" id="diskFree">74.5 GB（G盘）</span></div>
+            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-07 22:03（最近写入 02:53）</span></div>
+            <div class="info-row"><span class="info-key">预计完成</span><span class="info-val">剩余 53 个（全部为知产）</span></div>
         </div>
 
         <!-- 每日日志 -->
         <div class="log-section">
             <div class="log-title">📅 每日更新日志</div>
+            <div class="log-entry">
+                <div class="log-date">2026-09-07</div>
+                <div class="log-text">
+                    <span class="tag tag-running">总体 90.4% → 98.9%</span>
+                    2 天突飞猛进。本地文件系统扫描（去重 (1) 副本 + 仅扫描「完结版」目录）：各科目 unique mp4 数为 基础1076/工商872/金融792/人力877/财税798/建筑630/知产340/运输212/农业149。基础科目从 750 补满至 1066（超额 10 个，含讲义/模考视频），8 个科目已 100% 完成。
+                    <br><span class="tag tag-done">4699/4752 (98.9%)</span>
+                    剩余 53 个全部集中在知产（340/393，86.5%）。知产从 9/5 的 254 增至 340，2 天新增 86 个文件，此前卡死的 HQ-精讲文件已恢复下载。
+                    <br><span class="tag tag-done">下载状态正常</span>
+                    最近文件写入时间 2026-09-07 02:53（凌晨仍在下载），无临时/未完成文件（.baiduyun/.pending 等 0 个），(1) 副本已全部清零。
+                    <br><span class="tag tag-fix">磁盘</span>
+                    G 盘剩余 74.5 GB（9/5 时 141.5 GB → 2 天净增 ~67 GB，下载速度明显提升）。本地总占用 855.9 GB，文件总数 8085 个（含 pdf 讲义等非视频文件）。
+                </div>
+            </div>
+
             <div class="log-entry">
                 <div class="log-date">2026-09-05</div>
                 <div class="log-text">
@@ -345,15 +359,15 @@
     </div>
 
     <script>
-        // 科目数据（2026-09-05 更新：local=min(本地unique mp4, target) 兼顾完整下载与讲义串讲）
+        // 科目数据（2026-09-07 更新：local=min(本地unique mp4, target) 兼顾完整下载与讲义串讲）
         const SUBJECTS = [
-            { name: '基础', icon: '📘', local: 750, target: 1066, color: 'c-red' },
+            { name: '基础', icon: '📘', local: 1066, target: 1066, color: 'c-red' },
             { name: '工商', icon: '🏢', local: 737, target: 737,  color: 'c-orange' },
             { name: '金融', icon: '🏦', local: 664, target: 664,  color: 'c-pink' },
             { name: '人力', icon: '👥', local: 635, target: 635,  color: 'c-teal' },
             { name: '财税', icon: '💰', local: 554, target: 554,  color: 'c-blue' },
             { name: '建筑', icon: '🏗️', local: 426, target: 426,  color: 'c-purple' },
-            { name: '知产', icon: '📜', local: 254, target: 393,  color: 'c-green' },
+            { name: '知产', icon: '📜', local: 340, target: 393,  color: 'c-green' },
             { name: '运输', icon: '🚚', local: 189, target: 189,  color: 'c-cyan' },
             { name: '农业', icon: '🌾', local: 88,  target: 88,   color: 'c-amber' },
         ];
