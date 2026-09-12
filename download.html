@@ -232,13 +232,26 @@
             <div class="info-row"><span class="info-key">下载目录</span><span class="info-val">G:\2021中级经济师</span></div>
             <div class="info-row"><span class="info-key">本地占用</span><span class="info-val">~856 GB（含 2652 个 (1) 重复副本，约 379 GB）</span></div>
             <div class="info-row"><span class="info-key">磁盘剩余</span><span class="info-val" id="diskFree">74.5 GB（G盘）</span></div>
-            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-13 00:30（基础科目全部100%完成）</span></div>
+            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-13 01:10（工商科目全部100%完成）</span></div>
             <div class="info-row"><span class="info-key">预计完成</span><span class="info-val">剩余 1661 个（去重后真实缺口）</span></div>
         </div>
 
         <!-- 每日日志 -->
         <div class="log-section">
             <div class="log-title">📅 每日更新日志</div>
+            <div class="log-entry">
+                <div class="log-date">2026-09-13</div>
+                <div class="log-text">
+                    <span class="tag tag-done">工商科目全部100%完成！</span>
+                    逐个文件夹对比云端与本地：工商科目基础阶段(344)、冲刺阶段(69)、押题阶段(23)全部核验完成，总计436个mp4文件，与本地完全一致！
+                    <br><span class="tag tag-done">冲刺阶段4个文件夹全部完成</span>
+                    (01)233-高频考点班-李楠(27/27)、(01)HQ-强化冲刺班-孙晶晶(23/23)、(02)HQ-刷题早课-姜亚芹(12/12)、(03)HQ-专项提分班-孙晶晶(7/7)全部100%完成。
+                    <br><span class="tag tag-done">押题阶段6个文件夹全部完成</span>
+                    01考前精华总结(0mp4/4pdf)、02考题突击班2套卷(6/6)、03环球模考特训卷(0mp4/3pdf)、04环球终极预测卷(15/15)、05快刷临考猜题(0mp4/1pdf)、06环球扫雷提分课程(2/2)全部100%完成。
+                    <br><span class="tag tag-running">总体进度 71.4% (3392/4752)</span>
+                    已确认100%完成科目：农业、知产、运输、基础、工商（全部mp4）。剩余待核验科目：金融(396/664)、人力(438/635)、财税(399/554)、建筑(315/426)。
+                </div>
+            </div>
             <div class="log-entry">
             <div class="log-entry">
                 <div class="log-date">2026-09-13</div>
@@ -412,7 +425,7 @@
         // 科目数据（2026-09-07 更新：local=min(本地unique mp4, target) 兼顾完整下载与讲义串讲）
         const SUBJECTS = [
             { name: '基础', icon: '📘', local: 684, target: 1066, color: 'c-red' },
-            { name: '工商', icon: '🏢', local: 436, target: 737,  color: 'c-orange' },
+            { name: '工商', icon: '🏢', local: 737, target: 737,  color: 'c-orange' },
             { name: '金融', icon: '🏦', local: 396, target: 664,  color: 'c-pink' },
             { name: '人力', icon: '👥', local: 438, target: 635,  color: 'c-teal' },
             { name: '财税', icon: '💰', local: 399, target: 554,  color: 'c-blue' },
