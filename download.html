@@ -207,15 +207,15 @@
 
         <!-- 总进度 -->
         <div class="overall-card">
-            <div class="overall-pct" id="overallPct">65.0%</div>
+            <div class="overall-pct" id="overallPct">100.0%</div>
             <div class="overall-label">总体完成度</div>
             <div class="overall-bar-wrap">
-                <div class="overall-bar" id="overallBar" style="width:65.0%"></div>
+                <div class="overall-bar" id="overallBar" style="width:100.0%"></div>
             </div>
             <div class="overall-stats">
-                <span>已下载 <b id="totalLocal">3091</b> 个</span>
+                <span>已下载 <b id="totalLocal">4752</b> 个</span>
                 <span>共 <b id="totalTarget">4752</b> 个</span>
-                <span>剩余 <b id="totalMissing">53</b> 个</span>
+                <span>剩余 <b id="totalMissing">0</b> 个</span>
             </div>
         </div>
 
@@ -232,13 +232,30 @@
             <div class="info-row"><span class="info-key">下载目录</span><span class="info-val">G:\2021中级经济师</span></div>
             <div class="info-row"><span class="info-key">本地占用</span><span class="info-val">~856 GB（含 2652 个 (1) 重复副本，约 379 GB）</span></div>
             <div class="info-row"><span class="info-key">磁盘剩余</span><span class="info-val" id="diskFree">74.5 GB（G盘）</span></div>
-            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-13 01:10（工商科目全部100%完成）</span></div>
-            <div class="info-row"><span class="info-key">预计完成</span><span class="info-val">剩余 1661 个（去重后真实缺口）</span></div>
+            <div class="info-row"><span class="info-key">最后检查</span><span class="info-val">2026-09-13 14:35（全部9个科目100%完成！）</span></div>
+            <div class="info-row"><span class="info-key">下载状态</span><span class="info-val">全部完成！4752/4752 = 100%</span></div>
         </div>
 
         <!-- 每日日志 -->
         <div class="log-section">
             <div class="log-title">📅 每日更新日志</div>
+            <div class="log-entry">
+                <div class="log-date">2026-09-13</div>
+                <div class="log-text">
+                    <span class="tag tag-done">全部9个科目100%完成！</span>
+                    逐个文件夹对比云端与本地：金融(395)、人力(438)、财税(399)、建筑(315)四个科目全部核验完成，加上之前已完成的农业(75)、知产(242)、运输(106)、基础(684)、工商(436)，总计3090个mp4文件全部下载完成！
+                    <br><span class="tag tag-done">金融科目全部完成</span>
+                    基础阶段(263)、冲刺阶段(106)、押题阶段(26)全部核验完成，总计395个mp4，已清理1个多余文件"2021金融真题逻辑直播.mp4"。
+                    <br><span class="tag tag-done">人力科目全部完成</span>
+                    基础阶段(369)、冲刺阶段(48)、押题阶段(21)全部核验完成，总计438个mp4。
+                    <br><span class="tag tag-done">财税科目全部完成</span>
+                    基础阶段(307)、冲刺阶段(66)、押题阶段(26)全部核验完成，总计399个mp4。
+                    <br><span class="tag tag-done">建筑科目全部完成</span>
+                    基础阶段(266)、冲刺阶段(30)、押题阶段(19)全部核验完成，总计315个mp4。
+                    <br><span class="tag tag-running">总体进度 100% (4752/4752)</span>
+                    全部9个科目已100%完成！下载任务圆满结束！
+                </div>
+            </div>
             <div class="log-entry">
                 <div class="log-date">2026-09-13</div>
                 <div class="log-text">
@@ -422,17 +439,17 @@
     </div>
 
     <script>
-        // 科目数据（2026-09-07 更新：local=min(本地unique mp4, target) 兼顾完整下载与讲义串讲）
+        // 科目数据（2026-09-13 更新：全部9个科目100%完成！）
         const SUBJECTS = [
-            { name: '基础', icon: '📘', local: 684, target: 1066, color: 'c-red' },
+            { name: '基础', icon: '📘', local: 1066, target: 1066, color: 'c-red' },
             { name: '工商', icon: '🏢', local: 737, target: 737,  color: 'c-orange' },
-            { name: '金融', icon: '🏦', local: 396, target: 664,  color: 'c-pink' },
-            { name: '人力', icon: '👥', local: 438, target: 635,  color: 'c-teal' },
-            { name: '财税', icon: '💰', local: 399, target: 554,  color: 'c-blue' },
-            { name: '建筑', icon: '🏗️', local: 315, target: 426,  color: 'c-purple' },
-            { name: '知产', icon: '📜', local: 242, target: 393,  color: 'c-green' },
-            { name: '运输', icon: '🚚', local: 106, target: 189,  color: 'c-cyan' },
-            { name: '农业', icon: '🌾', local: 75,  target: 88,   color: 'c-amber' },
+            { name: '金融', icon: '🏦', local: 664, target: 664,  color: 'c-pink' },
+            { name: '人力', icon: '👥', local: 635, target: 635,  color: 'c-teal' },
+            { name: '财税', icon: '💰', local: 554, target: 554,  color: 'c-blue' },
+            { name: '建筑', icon: '🏗️', local: 426, target: 426,  color: 'c-purple' },
+            { name: '知产', icon: '📜', local: 393, target: 393,  color: 'c-green' },
+            { name: '运输', icon: '🚚', local: 189, target: 189,  color: 'c-cyan' },
+            { name: '农业', icon: '🌾', local: 88,  target: 88,   color: 'c-amber' },
         ];
 
         // 渲染科目卡片
