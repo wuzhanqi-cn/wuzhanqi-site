@@ -25,11 +25,14 @@ jobs:
           SILICONFLOW_API_KEY: ${{ secrets.SILICONFLOW_API_KEY }}
         run: python daily_news.py
 
-      - name: Commit news.json
+      - name: Prerender news into news.html
+        run: python prerender_news.py
+
+      - name: Commit news.json and news.html
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add news.json
+          git add news.json news.html
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else

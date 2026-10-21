@@ -1,0 +1,48 @@
+# Cloudflare Pages 自定义响应头
+# 注意：同名 header 若在多个重叠规则中出现，值会被逗号拼接成非法结果，
+# 因此 Cache-Control 一律按具体路径单独设置，/* 只放安全相关头。
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+# 图标、分享图、收录文件 —— 内容长期不变，缓存一天
+/favicon.ico
+  Cache-Control: public, max-age=86400
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=86400
+
+/og.png
+  Cache-Control: public, max-age=86400
+
+/manifest.json
+  Cache-Control: public, max-age=86400
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+
+# 新闻数据 —— 每天 21:30 由 GitHub Actions 更新，缓存 1 小时
+/news.json
+  Cache-Control: public, max-age=3600
+
+# 大体量静态页（约 780KB 的 3D 页面）—— 内容基本不变，缓存一周
+/rmb_50000_xinhua_single.html
+  Cache-Control: public, max-age=604800
+
+/rmb_50000_harvester_single.html
+  Cache-Control: public, max-age=604800
+
+/airmb_detail_1.html
+  Cache-Control: public, max-age=604800
+
+/airmb_detail_2.html
+  Cache-Control: public, max-age=604800
+
+# 开发域名不允许被搜索引擎收录（正式域名是 wuzhanqi.cn）
+https://wuzhanqi.pages.dev/*
+  X-Robots-Tag: noindex

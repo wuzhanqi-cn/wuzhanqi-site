@@ -113,7 +113,7 @@ def fetch_zgyww():
 
 # ============== 国内/国际要闻抓取 ==============
 SKIP_WORDS = ['更多', '返回', '首页', '登录', '注册', '下载', '客户端', '微博', '微信',
-              '视频', '图片', '直播', '专题', '滚动', '排行', '搜索', '关于我们', '联系方式',
+              '图片', '直播', '专题', '滚动', '排行', '搜索', '关于我们', '联系方式',
               'ENGLISH', 'English', '简', '繁', '客户端下载', 'APP', '订阅', '投稿']
 
 def extract_headlines(html, min_len=8, max_len=60):
@@ -132,8 +132,68 @@ def extract_headlines(html, min_len=8, max_len=60):
         results.append(title)
     return results
 
+
+# ============== 新闻联播（按日期，主素材源） ==============
+XWLB_URL = 'https://tv.cctv.com/lm/xwlb/day/{date}.shtml'
+
+def fetch_xwlb(date_str):
+    """抓取指定日期《新闻联播》节目单。
+    date_str 格式 YYYY-MM-DD。返回 [(时长, 标题), ...]，按当日实际播出顺序。
+    当天 19:00 播出，21:30 抓取时通常已上线；未上线则返回空列表由上层兜底。
+    """
+    d = date_str.replace('-', '')
+    url = XWLB_URL.format(date=d)
+    try:
+        raw = fetch_url(url, timeout=15)
+    except Exception as e:
+        print(f'  [新闻联播 {date_str}] 抓取失败: {e}')
+        return []
+
+    html = raw.decode('utf-8', errors='replace')
+    # 去掉脚本样式，避免误匹配
+    clean = re.sub(r'<script.*?</script>', '', html, flags=re.S)
+    clean = re.sub(r'<style.*?</style>', '', clean, flags=re.S)
+
+    # 页面结构：每个 <li> 是一条节目，时长在 <span>HH:MM:SS</span>，
+    # 标题在 alt="[视频]标题" / title="[视频]标题" 属性里。
+    # 首个 li 是「完整版」入口，alt 无 [视频] 前缀，自然被过滤掉。
+    items = []
+    for block in re.findall(r'<li>(.*?)</li>', clean, re.S):
+        dur_m = re.search(r'<span>(\d{2}:\d{2}:\d{2})</span>', block)
+        title_m = re.search(r'alt="\[视频\]([^"]+)"', block) or \
+                  re.search(r'title="\[视频\]([^"]+)"', block)
+        if not title_m:
+            continue
+        title = title_m.group(1).strip()
+        if len(title) < 6:
+            continue
+        items.append((dur_m.group(1) if dur_m else '', title))
+
+    # 去重（同一标题可能在多个属性里重复出现）
+    seen = set()
+    uniq = []
+    for dur, t in items:
+        if t not in seen:
+            seen.add(t)
+            uniq.append((dur, t))
+    return uniq
+
+
 def fetch_world_news():
-    """从多个来源抓取国内/国际要闻标题"""
+    """国内/国际要闻素材：以《新闻联播》当日节目单为主，失败则回退旧抓取逻辑。"""
+    today_str = datetime.now(BEIJING_TZ).strftime('%Y-%m-%d')
+    yesterday_str = (datetime.now(BEIJING_TZ) - timedelta(days=1)).strftime('%Y-%m-%d')
+
+    # 优先当天，其次昨天（避免当晚 19:00 尚未上线）
+    for d in (today_str, yesterday_str):
+        items = fetch_xwlb(d)
+        if items:
+            print(f'  [新闻联播 {d}] {len(items)} 条')
+            # 只保留标题，交给 AI 概括
+            return [t for _, t in items]
+
+    print('  [新闻联播] 未取到，回退到网站首页抓取')
+
     headlines = []
     sources = [
         ('人民网', 'http://www.people.com.cn/'),
@@ -177,7 +237,9 @@ def generate_summary(yiwu_news, world_headlines):
         recent_yiwu = yiwu_news[:10]  #  fallback: 取最新10条
 
     yiwu_text = '\n'.join(f'- {n["title"]}' for n in recent_yiwu[:12])
-    world_text = '\n'.join(f'- {h}' for h in world_headlines[:15])
+    # 新闻联播的国内要闻在前、国际要闻与联播快讯在后，必须全量传入，
+    # 否则末尾的国际新闻会被截掉（旧版 [:15] 就有这个问题）
+    world_text = '\n'.join(f'- {h}' for h in world_headlines)
 
     prompt = f"""今天是{today}。请根据以下新闻素材，写一段"每日要闻"摘要，用于个人网站展示。
 
@@ -188,7 +250,7 @@ def generate_summary(yiwu_news, world_headlines):
 4. 只基于提供的素材写，不要编造新闻；如果某部分素材不足就少写几条
 5. 直接输出 HTML 内容，不要任何解释或 markdown 代码块标记
 
-【国内/国际新闻素材】
+【国内/国际新闻素材】（来源：当日《新闻联播》节目单，已按播出顺序排列，可直接概括）
 {world_text if world_text else '（暂未获取到国际新闻素材）'}
 
 【义乌本地新闻素材】
