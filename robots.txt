@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# API 接口无需被索引（留言板后端）
+Disallow: /api/
+
+# 静态资源与数据文件
+Disallow: /news.json
+
+Sitemap: https://wuzhanqi.cn/sitemap.xml

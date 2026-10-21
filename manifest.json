@@ -1,0 +1,23 @@
+{
+  "name": "五战旗 · wuzhanqi.cn",
+  "short_name": "五战旗",
+  "description": "静水流深，万物生长。这里是一片安静的数字角落 —— 记录生活、分享工具、每日要闻。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
