@@ -186,6 +186,15 @@
             line-height: 1.7;
         }
 
+        /* 播放器按需加载：未进入视口时不加载 iframe，避免页面打开就后台播放 */
+        .video-wrapper:not(.is-active) iframe {
+            visibility: hidden;
+        }
+
+        .video-wrapper:not(.is-active) {
+            cursor: pointer;
+        }
+
         /* Footer */
         .footer {
             background: #1a1a2e;
@@ -296,7 +305,7 @@
         <!-- Bilibili 嵌入视频 1 -->
         <div class="video-wrapper">
             <iframe
-                src="//player.bilibili.com/player.html?bvid=BV1eP7d6fEBb&page=1"
+                data-src="//player.bilibili.com/player.html?bvid=BV1eP7d6fEBb&page=1"
                 scrolling="no"
                 border="0"
                 frameborder="no"
@@ -318,7 +327,7 @@
         <!-- Bilibili 嵌入视频 2 -->
         <div class="video-wrapper">
             <iframe
-                src="//player.bilibili.com/player.html?bvid=BV1VT7d6oEj5&page=1"
+                data-src="//player.bilibili.com/player.html?bvid=BV1VT7d6oEj5&page=1"
                 scrolling="no"
                 border="0"
                 frameborder="no"
@@ -340,7 +349,7 @@
         <!-- Bilibili 嵌入视频 3 -->
         <div class="video-wrapper">
             <iframe
-                src="//player.bilibili.com/player.html?bvid=BV1aoWk6qEt2&page=1"
+                data-src="//player.bilibili.com/player.html?bvid=BV1aoWk6qEt2&page=1"
                 scrolling="no"
                 border="0"
                 frameborder="no"
@@ -362,7 +371,7 @@
         <!-- Bilibili 嵌入视频 4 -->
         <div class="video-wrapper">
             <iframe
-                src="//player.bilibili.com/player.html?bvid=BV1EiWB6iEam&page=1"
+                data-src="//player.bilibili.com/player.html?bvid=BV1EiWB6iEam&page=1"
                 scrolling="no"
                 border="0"
                 frameborder="no"
@@ -384,7 +393,7 @@
         <!-- Bilibili 嵌入视频 5 -->
         <div class="video-wrapper">
             <iframe
-                src="//player.bilibili.com/player.html?bvid=BV1mYMB6CEhb&page=1"
+                data-src="//player.bilibili.com/player.html?bvid=BV1mYMB6CEhb&page=1"
                 scrolling="no"
                 border="0"
                 frameborder="no"
@@ -426,6 +435,70 @@
     document.querySelectorAll('.hero-content, .video-card').forEach(el => {
         el.style.animationPlayState = 'paused';
         observer.observe(el);
+    });
+    // 播放器按需加载：只有当前最可见的一个视频加载播放器，
+    // 滚出视口就卸载 iframe（播放与声音随之停止），回到视口再重新加载。
+    const wrappers = Array.from(document.querySelectorAll('.video-wrapper'));
+    const ratios = new Map(wrappers.map(w => [w, 0]));
+    let active = null;
+    let pinned = null;
+
+    function unload(w) {
+        const frame = w.querySelector('iframe');
+        frame.src = 'about:blank';          // 销毁播放器，彻底停止播放
+        w.classList.remove('is-active');
+    }
+
+    function load(w) {
+        const frame = w.querySelector('iframe');
+        frame.src = frame.dataset.src;      // 播放器地址与改造前完全一致
+        w.classList.add('is-active');
+    }
+
+    function setActive(w) {
+        if (active === w) return;
+        if (active) unload(active);
+        active = w;
+        if (w) load(w);
+    }
+
+    const playObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => ratios.set(entry.target, entry.intersectionRatio));
+
+        // 手动点开的视频优先，直到它滚出视口为止
+        if (pinned) {
+            if ((ratios.get(pinned) || 0) >= 0.15) {
+                setActive(pinned);
+                return;
+            }
+            pinned = null;
+        }
+
+        let best = null;
+        let bestRatio = 0;
+        ratios.forEach((ratio, w) => {
+            if (ratio > bestRatio) { bestRatio = ratio; best = w; }
+        });
+
+        if (bestRatio < 0.15) {             // 视频都不在视口 → 全部停止
+            setActive(null);
+        } else if (!active) {               // 第一个进入视口的视频
+            setActive(best);
+        } else {
+            const currentRatio = ratios.get(active) || 0;
+            // 当前这个几乎看不见了，或另一个明显更居中，才切换
+            if (best !== active && (currentRatio < 0.15 || bestRatio > currentRatio + 0.2)) {
+                setActive(best);
+            }
+        }
+    }, { threshold: [0, 0.15, 0.35, 0.55, 0.75, 1] });
+
+    wrappers.forEach(w => {
+        playObserver.observe(w);
+        w.addEventListener('click', () => {
+            pinned = w;
+            setActive(w);
+        });
     });
 </script>
 
