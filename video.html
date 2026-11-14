@@ -277,6 +277,65 @@
             }
         }
 
+        /* 分页控件 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 10px auto 50px;
+            padding: 0 20px;
+        }
+
+        .pagination button {
+            min-width: 44px;
+            height: 44px;
+            padding: 0 14px;
+            border: none;
+            border-radius: 12px;
+            background: #fff;
+            color: #555;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled):not(.active) {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .pagination button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            cursor: default;
+            box-shadow: 0 6px 18px rgba(102,126,234,0.45);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.38;
+            cursor: not-allowed;
+        }
+
+        .video-page[hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 480px) {
+            .pagination button {
+                min-width: 38px;
+                height: 38px;
+                font-size: 0.88rem;
+                padding: 0 10px;
+            }
+        }
+
         /* 平滑滚动 */
         html {
             scroll-behavior: smooth;
@@ -300,6 +359,7 @@
 
 <!-- 视频播放区域 -->
 <div class="video-container">
+    <div class="video-page" data-page="0">
     <!-- 视频 1 · BV1eP7d6fEBb -->
     <div class="video-card">
         <!-- Bilibili 嵌入视频 1 -->
@@ -520,6 +580,9 @@
         </div>
     </div>
 
+    </div><!-- /video-page 0 -->
+
+    <div class="video-page" data-page="1" hidden>
     <!-- 视频 11 · BV1CMsV6rE6K -->
     <div class="video-card">
         <!-- Bilibili 嵌入视频 11 -->
@@ -563,7 +626,11 @@
             <p>义乌市，同年哥讲新闻2023年1月10日</p>
         </div>
     </div>
+    </div><!-- /video-page 1 -->
 </div>
+
+<!-- 分页控件 -->
+<nav class="pagination" id="pagination" aria-label="视频分页"></nav>
 
 <!-- Footer -->
 <footer class="footer">
@@ -654,6 +721,54 @@
             setActive(w);
         });
     });
+
+    /* ===== 分页：每页 10 个视频 ===== */
+    (function () {
+        const pages = Array.from(document.querySelectorAll('.video-page'));
+        const pagination = document.getElementById('pagination');
+        if (!pages.length || !pagination) return;
+        let current = 0;
+
+        function render() {
+            pagination.innerHTML = '';
+
+            const prev = document.createElement('button');
+            prev.type = 'button';
+            prev.textContent = '‹ 上一页';
+            prev.disabled = current === 0;
+            prev.addEventListener('click', () => go(current - 1));
+            pagination.appendChild(prev);
+
+            pages.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = String(i + 1);
+                if (i === current) btn.classList.add('active');
+                btn.setAttribute('aria-current', i === current ? 'page' : 'false');
+                btn.addEventListener('click', () => go(i));
+                pagination.appendChild(btn);
+            });
+
+            const next = document.createElement('button');
+            next.type = 'button';
+            next.textContent = '下一页 ›';
+            next.disabled = current === pages.length - 1;
+            next.addEventListener('click', () => go(current + 1));
+            pagination.appendChild(next);
+        }
+
+        function go(i) {
+            if (i < 0 || i >= pages.length || i === current) return;
+            setActive(null);   // 停止所有播放，避免切页后后台播放
+            pinned = null;
+            pages.forEach((p, idx) => { p.hidden = idx !== i; });
+            current = i;
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        render();
+    })();
 </script>
 
 </body>
